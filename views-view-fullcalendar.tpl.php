@@ -69,7 +69,7 @@ $(document).ready(function() {
                   end: $(event_details).attr('end'),
                   url: $(event_details).attr('href'),
                   allDay: ($(event_details).attr('allDay') == '1'),
-                  className: $(event_details).attr('cn'),
+                  className: $(event_details).attr('cn')
               });
           });
 
