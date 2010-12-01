@@ -48,26 +48,26 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'textfield',
       '#title' => t('FullCalendar header left'),
       '#default_value' => $this->options['fullcalendar_header_left'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
+      '#description' => '<a href="http://arshaw.com/fullcalendar/docs/display/header" target="_blank">http://arshaw.com/fullcalendar/docs/display/header</a>',
     );
     $form['fullcalendar_header_center'] = array(
       '#type' => 'textfield',
       '#title' => t('FullCalendar header center'),
       '#default_value' => $this->options['fullcalendar_header_center'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
+      '#description' => '<a href="http://arshaw.com/fullcalendar/docs/display/header" target="_blank">http://arshaw.com/fullcalendar/docs/display/header</a>',
     );
     $form['fullcalendar_header_right'] = array(
       '#type' => 'textfield',
       '#title' => t('FullCalendar header right'),
       '#default_value' => $this->options['fullcalendar_header_right'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/header/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/header/</a>",
+      '#description' => '<a href="http://arshaw.com/fullcalendar/docs/display/header" target="_blank">http://arshaw.com/fullcalendar/docs/display/header</a>',
     );
     $form['fullcalendar_weekmode'] = array(
       '#type' => 'select',
       '#title' => t('weekMode'),
       '#options' => array("fixed" => "fixed", "liquid" => "liquid", "variable" => "variable"),
       '#default_value' => $this->options['fullcalendar_weekmode'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/display/weekMode/' target='_blank'>http://arshaw.com/fullcalendar/docs/display/weekMode/</a>",
+      '#description' => '<a href="http://arshaw.com/fullcalendar/docs/display/weekMode" target="_blank">http://arshaw.com/fullcalendar/docs/display/weekMode</a>',
     );
     $form['fullcalendar_defaultyear'] = array(
       '#type' => 'textfield',
@@ -91,7 +91,7 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
       '#type' => 'textfield',
       '#title' => t('Time format'),
       '#default_value' => $this->options['fullcalendar_timeformat'],
-      '#description' => "<a href='http://arshaw.com/fullcalendar/docs/text/timeFormat/' target='_blank'>http://arshaw.com/fullcalendar/docs/text/timeFormat/</a>",
+      '#description' => '<a href="http://arshaw.com/fullcalendar/docs/text/timeFormat" target="_blank">http://arshaw.com/fullcalendar/docs/text/timeFormat</a>',
     );
   }
 }
