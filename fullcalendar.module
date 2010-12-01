@@ -15,26 +15,90 @@ function fullcalendar_views_api() {
   );
 }
 
+/**
+ * Implementation of hook_init().
+ */
 function fullcalendar_init() {
-  drupal_add_css(drupal_get_path('module', 'fullcalendar') .'/fullcalendar.css', 'module');
-  drupal_add_js(drupal_get_path('module', 'fullcalendar') .'/fullcalendar.js', 'module');
+  $path = drupal_get_path('module', 'fullcalendar');
+
+  drupal_add_css($path . '/fullcalendar.css', 'module');
+  drupal_add_js($path . '/fullcalendar.js', 'module');
+
+  // We need some jQuery UI files.
+  $files = array('ui.draggable', 'ui.droppable', 'ui.resizable', 'effects.highlight');
+  jquery_ui_add($files);
+}
+
+/**
+ * Implementation of hook_perm().
+ *
+ * @return array An array of valid permissions for the fullcalendar module
+ */
+function fullcalendar_perm() {
+  return array('update any fullcalendar event');
+}
+
+/**
+ * Implementation of hook_menu().
+ *
+ * @return An array of menu items.
+ */
+function fullcalendar_menu() {
+  $items = array();
+
+  $items['fullcalendar/ajax/update/%/%node'] = array(
+    'title' => 'Update event',
+    'description' => 'Save the updated event datetime.',
+    'page callback' => 'fullcalendar_update',
+    'page arguments' => array(3, 4),
+    'access callback' => '_fullcalendar_update_access',
+    'access arguments' => array(4),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Save the updated fullcalendar event's datetime.
+ *
+ * @param string $action
+ *   Value can be 'drop' or 'resize'.
+ * @param object $node
+ */
+function fullcalendar_update($action, $node) {
+  // Retrieve the post vars form the ajax call.
+  $field = $_POST['field'];
+  $index = $_POST['index'];
+  $all_day = isset($_POST['all_day']) ? $_POST['all_day'] : '';
+  $day_delta = $_POST['day_delta'];
+  $minute_delta = $_POST['minute_delta'];
+
+  if (!empty($field) && isset($index)) {
+    $old_start = $node->{$field}[$index]['value'];
+    $old_end = $node->{$field}[$index]['value2'];
+
+    switch ($action) {
+      case 'drop':
+        $node->{$field}[$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $node->{$field}[$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        break;
+      case 'resize':
+        $node->{$field}[$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        break;
+    }
+
+    // Save the new start/end values.
+    node_save($node);
+
+    drupal_json(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status_close">close</a>]'));
+  }
 }
 
 //Pass through to template_preprocess_views_view_fields so that fields will be available to template file
 //function template_preprocess_views_view_fields_fullcalendar(&$vars) {	
 //  template_preprocess_views_view_fields($vars);
 //}
-
-function fullcalendar_set_display_times($node, $field_name, &$vars){
-  //$vars['start'] = $node->{$field_name}[0]['value'];
-  //$vars['end'] = $node->{$field_name}[0]['value2'];
-  
-  //Pass times through date modules date_formatter_process function to translate them to the right display times
-  $dfp_info = array('#node' => $node, '#field_name' => $field_name, '#formatter' => NULL, '#item' => $node->{$field_name}[0]);
-  $dfp = date_formatter_process($dfp_info);
-  $vars['start'] = $dfp['value']['local']['datetime'];
-  $vars['end'] = $dfp['value2']['local']['datetime'];
-}
 
 /**
  * Implementation of hook_theme().
@@ -69,14 +133,14 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $options = $vars['options'];
 
   // Make sure the variables are defined.
-  $vars['title'] = '';
-  $vars['start'] = '';
-  $vars['end'] = '';
   $vars['url'] = '';
   $vars['node'] = '';
-  $vars['allDay'] = FALSE;
   $vars['className'] = '';
+  $vars['data'] = array(); // Contains the start, end & allDay values.
+  $vars['editable'] = FALSE;
   
+  $index = 0; // Used to create $vars['data'] variable.
+
   $nid = $vars['row']->{$vars['field_alias']};
     if (!is_numeric($nid)) {
     return;
@@ -89,21 +153,21 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
     return;
   }
   
+  // Allow resize/drag/drop of an event if user has proper permissions.
+  if (_fullcalendar_update_access($node)) {
+    $vars['editable'] = TRUE;
+  }
+
   $vars['className'] = theme('fullcalendar_classname', $node);
   $vars['node'] = $node;
-  $vars['title'] = $node->title;
-  $vars['url'] = url('node/'. $nid);
-  //echo str_replace(" ","&nbsp;",str_replace("\n","<br>",htmlspecialchars(print_r($node,true))));
-  if ($options['fullcalendar_url_field']) {
+
+  if (!empty($options['fullcalendar_url_field'])) {
     if (isset($node->{$options['fullcalendar_url_field']}[0]['value'])) {
       $vars['url'] = $node->{$options['fullcalendar_url_field']}[0]['value'];
     }
   }
-  
-  //store field info in a static so it doesn't have to be loaded for every row
-  static $fields_info;
-  if (!(is_array($fields_info))) {
-    $fields_info = array();
+  else {
+    $vars['url'] = url('node/'. $nid);
   }
   
   //find datetime field (strip tags in case one of the wysiwyg's adds tags)
@@ -112,78 +176,154 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
     $date_fields = explode("\n", $date_fields);
     foreach ($date_fields as $date_field) {
       if ($date_field == 'node_created') {
-        $vars['start'] = format_date($node->created, 'custom', 'Y-m-j H:i:s');
+        $vars['data'][$index]['field'] = $date_field;
+        $vars['data'][$index++]['start'] = format_date($node->created, 'custom', 'Y-m-j H:i:s');
         break;
       }
       if ($date_field == 'node_changed') {
-        $vars['start'] = format_date($node->changed, 'custom', 'Y-m-j H:i:s');
+        $vars['data'][$index]['field'] = $date_field;
+        $vars['data'][$index++]['start'] = format_date($node->changed, 'custom', 'Y-m-j H:i:s');
         break;
       }
       //if field exists and it is a date or datetime
-      if ((isset($node->{$date_field})) && in_array($node->{$date_field}[0]['date_type'], array('datetime', 'date', 'datestamp'))) {
-        fullcalendar_set_display_times($node, $date_field, &$vars);
+      if (isset($node->$date_field)) {
+        switch ($node->{$date_field}[0]['date_type']) {
+          case 'date':
+          case 'datetime':
+          case 'datestamp':
+            foreach ($node->$date_field as $key => $values) {
+              $vars['data'][$index]['field'] = $date_field;
+              $vars['data'][$index]['index'] = $key;
+
+              if ($field = content_fields($key)) {
+                $vars['allDay'][$index]['allDay'] = _fullcalendar_is_all_day($field, $values);
+              }
+              else {
+                $vars['allDay'][$index]['allDay'] = FALSE;
+              }
+              _fullcalendar_set_display_times($node, $date_field, $index++, $vars);
+            }
+            break;
+        }
         break;
       }
     }
   }
-  //if no specified datetime field then search all fields and use first date or datetime field
+  // Dynamically find the field(s) with date/datetime values.
   else {
-    $node_ary = (array) $node;
-    foreach ($node_ary as $key => $value) {
-      if (preg_match('/field_.*/', $key)) {
-        if ((isset($value[0]['date_type'])) and (($value[0]['date_type'] == 'datetime') or ($value[0]['date_type'] == 'date'))) {
+    $fields = content_fields();
+    $node_a = (array) $node;
+    foreach ($node_a as $field_name => $node_values) {
+      if (preg_match('/field_.*/', $field_name) && isset($node_values[0]['date_type'])) {
+        // Check first element; can have > 1 value, but the date_type will be the same for all those values.
+        switch ($node_values[0]['date_type']) {
+          case 'date':
+          case 'datetime':
+          case 'datestamp':
+            foreach ($node_values as $key_index => $values) {
+              if (isset($fields[$field_name])) {
+                // If no end date is set, copy start date for processing.
+                if (empty($values['value2'])) {
+                  $values['value2'] = $values['value'];
+                }
 
-          // If no end date is set, copy start date for processing
-          if (empty($value[0]['value2'])) {
-            $value[0]['value2'] = $value[0]['value'];
-          }
-        
-          if ($field = content_fields($key)) {
-            // Get DateTime objects with timezone support
-            $date1 = date_create($value[0]['value'], timezone_open($value[0]['timezone_db']));
-            date_timezone_set($date1, timezone_open($value[0]['timezone']));
-            $date2 = date_create($value[0]['value2'], timezone_open($value[0]['timezone_db']));
-            date_timezone_set($date2, timezone_open($value[0]['timezone']));
+                $vars['data'][$index]['field'] = $field_name;
+                $vars['data'][$index]['index'] = $key_index;
+                $vars['allDay'][$index]['allDay'] = _fullcalendar_is_all_day($field, $values);
 
-            // Get the max increment for minutes and seconds
-            $increment = isset($field['widget']['increment']) ? $field['widget']['increment'] : 1;
-            $tmp = date_seconds('s', TRUE, $increment);
-            $max_seconds = array_pop($tmp);
-            $tmp = date_minutes('i', TRUE, $increment);
-            $max_minutes = array_pop($tmp);
-
-            // Get the most specific granularity
-            $granularity = date_granularity($field);
-            $granularity = array_pop($granularity);
-            
-            // Mirror date module's handing of all day events
-            switch ($granularity) {
-              case 'second':
-                $min_comp = date_format($date1, 'H:i:s') == '00:00:00';
-                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i:s') == '23:'. $max_minutes .':'. $max_seconds;
-                break;
-              case 'minute':
-                $min_comp = date_format($date1, 'H:i') == '00:00';
-                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i') == '23:'. $max_minutes;
-                break;
-              case 'hour':
-                $min_comp = date_format($date1, 'H') == '00';
-                $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H') == '23';
-                break;
-              default:
-                $min_comp = TRUE;
-                $max_comp = FALSE;
+                _fullcalendar_set_display_times($node, $field_name, $index++, $vars);
+              }
             }
-
-            // If granularity did not include time, set to All Day
-            $fields_info[$key]['allDay'] = (date_has_time(date_granularity($field))) ? ($min_comp && $max_comp) : TRUE;
-          }
-          
-          $vars['allDay'] = $fields_info[$key]['allDay'];
-          
-          fullcalendar_set_display_times($node, $key, &$vars);
+            break;
         }
       }
     }
   }
+}
+
+/**
+ * Pass times through date modules date_formatter_process function to
+ * translate them to the right display times.
+ *
+ * @param object $node
+ * @param string $field_name
+ * @param integer $index
+ * @param array $vars
+ */
+function _fullcalendar_set_display_times($node, $field_name, $index, &$vars) {
+  $dfp_info = array(
+    '#node' => $node,
+    '#field_name' => $field_name,
+    '#formatter' => NULL,
+    '#item' => $node->{$field_name}[$index],
+  );
+  $dfp = date_formatter_process($dfp_info);
+  $vars['data'][$index]['start'] = $dfp['value']['local']['datetime'];
+  $vars['data'][$index]['end'] = $dfp['value2']['local']['datetime'];
+}
+
+/**
+ * Check if the user has access to update the given fullcalendar event.
+ *
+ * @param object $node
+ * @return bool
+ */
+function _fullcalendar_update_access($node) {
+  global $user;
+
+  if (!empty($node) && (user_access('administer nodes')
+      || user_access('update any fullcalendar event')
+      || user_access('edit any ' . $node->type . ' content')
+      || (user_access('edit own ' . $node->type . ' content') && $node->uid == $user->uid))) {
+        return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Determine if the event should be flagged as an ALL DAY event.
+ *
+ * @param string $field
+ * @param array $values
+ */
+function _fullcalendar_is_all_day($field, $values) {
+  // Get DateTime objects with timezone support
+  $date1 = date_create($values['start'], timezone_open($values['timezone_db']));
+  date_timezone_set($date1, timezone_open($values['timezone']));
+  $date2 = date_create($values['end'], timezone_open($values['timezone_db']));
+  date_timezone_set($date2, timezone_open($values['timezone']));
+
+  // Get the max increment for minutes and seconds
+  $increment = isset($field['widget']['increment']) ? $field['widget']['increment'] : 1;
+  $tmp = date_seconds('s', TRUE, $increment);
+  $max_seconds = array_pop($tmp);
+  $tmp = date_minutes('i', TRUE, $increment);
+  $max_minutes = array_pop($tmp);
+
+  // Get the most specific granularity
+  $granularity = date_granularity($field);
+  $granularity = array_pop($granularity);
+
+  // Mirror date module's handing of all day events
+  switch ($granularity) {
+    case 'second':
+      $min_comp = date_format($date1, 'H:i:s') == '00:00:00';
+      $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i:s') == '23:'. $max_minutes .':'. $max_seconds;
+      break;
+    case 'minute':
+      $min_comp = date_format($date1, 'H:i') == '00:00';
+      $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H:i') == '23:'. $max_minutes;
+      break;
+    case 'hour':
+      $min_comp = date_format($date1, 'H') == '00';
+      $max_comp = date_format($date2, 'H:i:s') == '00:00:00' || date_format($date2, 'H') == '23';
+      break;
+    default:
+      $min_comp = TRUE;
+      $max_comp = FALSE;
+  }
+
+  // If granularity did not include time, event is ALL DAY.
+  return (date_has_time(date_granularity($field))) ? ($min_comp && $max_comp) : TRUE;
 }

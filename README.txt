@@ -1,4 +1,9 @@
-To use the fullcalendar module.
+This version of FullCalendar requires specific versions of the following:
+  The 6.x-2.x branch of jQuery Update (http://drupal.org/project/jquery_update)
+  Version 1.7 of jQuery UI (http://drupal.org/project/jquery_ui)
+Instructions for installing each can be found in their respective README.txt files
+
+To use the fullcalendar module:
 
 1) Install views, date, date api, and date timezone modules
 2) Create a new content type that has either a date or a datetime field
