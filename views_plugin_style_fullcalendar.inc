@@ -1,12 +1,12 @@
 <?php
 // $Id$
+
 /**
  * @file
  * Contains the fullcalendar style plugin.
  */
 
 class views_plugin_style_fullcalendar extends views_plugin_style {
-    
   function option_definition() {
     $options = parent::option_definition();
     $options['fullcalendar_view'] = array('default' => 'month');
@@ -24,19 +24,24 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
   }
 
   function options_form(&$form, &$form_state) {
-    //parent::options_form($form, $form_state);
     $form['fullcalendar_view'] = array(
       '#type' => 'select',
       '#title' => t('Default Timespan'),
-      '#options' => array("month" => "month", "basicWeek" => "basicWeek", "basicDay" => "basicDay", "agendaWeek" => "agendaWeek", "agendaDay" => "agendaDay"),
+      '#options' => array(
+        'month' => 'month',
+        'basicWeek' => 'basicWeek',
+        'basicDay' => 'basicDay',
+        'agendaWeek' => 'agendaWeek',
+        'agendaDay' => 'agendaDay',
+      ),
       '#default_value' => $this->options['fullcalendar_view'],
       '#description' => t('Default timespan presented to user.'),
     );
     $form['fullcalendar_theme'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use JQuery UI Theme'),
+      '#title' => t('Use jQuery UI Theme'),
       '#default_value' => $this->options['fullcalendar_theme'],
-      '#description' => t('If checked, the calendar will use any loaded jquery ui themes.'),
+      '#description' => t('If checked, the calendar will use any loaded jQuery UI themes.'),
     );
     $form['fullcalendar_url_colorbox'] = array(
       '#type' => 'checkbox',
@@ -65,7 +70,11 @@ class views_plugin_style_fullcalendar extends views_plugin_style {
     $form['fullcalendar_weekmode'] = array(
       '#type' => 'select',
       '#title' => t('weekMode'),
-      '#options' => array("fixed" => "fixed", "liquid" => "liquid", "variable" => "variable"),
+      '#options' => array(
+        'fixed' => 'fixed',
+        'liquid' => 'liquid',
+        'variable' => 'variable',
+      ),
       '#default_value' => $this->options['fullcalendar_weekmode'],
       '#description' => '<a href="http://arshaw.com/fullcalendar/docs/display/weekMode" target="_blank">http://arshaw.com/fullcalendar/docs/display/weekMode</a>',
     );

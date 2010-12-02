@@ -1,5 +1,6 @@
 <?php
 // $Id$
+
 /**
  * @file
  * Contains the node view row style plugin.
@@ -37,7 +38,7 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
       '#description' => t('If the calendar items should not link directly to the node, enter the name of the cck field to use for the url instead.  For example "field_url"'),
     );
   }
-  
+
   function render($row) {
     return theme($this->theme_functions(), $this->view, $this->options, $row, $this->field_alias);
   }

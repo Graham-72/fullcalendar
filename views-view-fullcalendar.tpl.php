@@ -1,7 +1,8 @@
 <?php
 // $Id$
+
 /**
- * @file views-view-fullcalendar.tpl.php
+ * @file
  * View to display the fullcalendar
  *
  * Variables available:
@@ -15,20 +16,20 @@
  * -   fullcalendar_header_right : values for the header right region : http://arshaw.com/fullcalendar/docs/display/header/
  * -   fullcalendar_weekmode : number of week rows : http://arshaw.com/fullcalendar/docs/display/weekMode/
  */
- 
+
 ?>
 <div id="fullcalendar-status"></div>
 <div id="fullcalendar"></div>
-<div id="fullcalendar_content">
-<?php
-for ($i = 0; $i < count($rows); $i++) {
-  print $rows[$i];
-}
-?>
+<div id="fullcalendar-content">
+  <?php
+  foreach ($rows as $row) {
+    print $row;
+  }
+  ?>
 </div>
 <script type="text/javascript">
 Drupal.behaviors.fullCalendar = function(context) {
-  $('#fullcalendar_content').hide(); //hide the failover display
+  $('#fullcalendar-content').hide(); //hide the failover display
   $('#fullcalendar').fullCalendar({
     defaultView: '<?php echo $options['fullcalendar_view']; ?>',
     theme: <?php echo $options['fullcalendar_theme'] ? 'true' : 'false'; ?>,
@@ -109,7 +110,7 @@ Drupal.behaviors.fullCalendar = function(context) {
     return false;
   }
 
-  $('.fullcalendar-status_close').live('click', function() {
+  $('.fullcalendar-status-close').live('click', function() {
     $('#fullcalendar-status').slideUp();
     return false;
   });

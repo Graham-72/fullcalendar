@@ -1,7 +1,8 @@
 <?php
 // $Id$
+
 /**
- * @file views-view-node-fullcalendar.tpl.php
+ * @file
  * View to display the fullcalendar rows (events)
  *
  * Variables available:
@@ -16,7 +17,7 @@
  *
  * Note that if you use className for the event's className attribute then you'll get weird results from jquery!
  */
- 
+
 ?>
 <div class="fullcalendar_event">
   <?php foreach ($data as $row): ?>

@@ -1,13 +1,14 @@
 <?php
 // $Id$
+
 /**
  * @file
  * Provides a views style plugin for FullCalendar
  */
- 
+
 /**
-* implementation of hook_views_api()
-*/
+ * Implementation of hook_views_api().
+ */
 function fullcalendar_views_api() {
   return array(
     'api' => '2',
@@ -25,7 +26,12 @@ function fullcalendar_init() {
   drupal_add_js($path . '/fullcalendar.js', 'module');
 
   // We need some jQuery UI files.
-  $files = array('ui.draggable', 'ui.droppable', 'ui.resizable', 'effects.highlight');
+  $files = array(
+    'ui.draggable',
+    'ui.droppable',
+    'ui.resizable',
+    'effects.highlight',
+  );
   jquery_ui_add($files);
 }
 
@@ -91,12 +97,12 @@ function fullcalendar_update($action, $node) {
     // Save the new start/end values.
     node_save($node);
 
-    drupal_json(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status_close">close</a>]'));
+    drupal_json(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status-close">close</a>]'));
   }
 }
 
 //Pass through to template_preprocess_views_view_fields so that fields will be available to template file
-//function template_preprocess_views_view_fields_fullcalendar(&$vars) {	
+//function template_preprocess_views_view_fields_fullcalendar(&$vars) {
 //  template_preprocess_views_view_fields($vars);
 //}
 
@@ -138,7 +144,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $vars['className'] = '';
   $vars['data'] = array(); // Contains the start, end & allDay values.
   $vars['editable'] = FALSE;
-  
+
   $index = 0; // Used to create $vars['data'] variable.
 
   $nid = $vars['row']->{$vars['field_alias']};
@@ -147,12 +153,11 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   }
 
   $node = node_load($nid);
-  
 
   if (empty($node)) {
     return;
   }
-  
+
   // Allow resize/drag/drop of an event if user has proper permissions.
   if (_fullcalendar_update_access($node)) {
     $vars['editable'] = TRUE;
@@ -169,7 +174,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   else {
     $vars['url'] = url('node/'. $nid);
   }
-  
+
   //find datetime field (strip tags in case one of the wysiwyg's adds tags)
   $date_fields = trim(strip_tags($options['fullcalendar_date_fields']));
   if ($date_fields) {

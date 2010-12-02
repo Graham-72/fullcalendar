@@ -7,7 +7,7 @@
  */
 
 /**
- * Implementation of hook_views_plugins
+ * Implementation of hook_views_plugins().
  */
 function fullcalendar_views_plugins() {
   return array(
