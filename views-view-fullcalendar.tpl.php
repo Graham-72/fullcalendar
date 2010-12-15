@@ -31,15 +31,15 @@
 Drupal.behaviors.fullCalendar = function(context) {
   $('#fullcalendar-content').hide(); //hide the failover display
   $('#fullcalendar').fullCalendar({
-    defaultView: '<?php echo $options['fullcalendar_view']; ?>',
-    theme: <?php echo $options['fullcalendar_theme'] ? 'true' : 'false'; ?>,
+    defaultView: '<?php echo $options['display']['fc_view']; ?>',
+    theme: <?php echo $options['modules']['fc_theme'] ? 'true' : 'false'; ?>,
     header: {
-      left: '<?php echo $options['fullcalendar_header_left']; ?>',
-      center: '<?php echo $options['fullcalendar_header_center']; ?>',
-      right: '<?php echo $options['fullcalendar_header_right']; ?>'
+      left: '<?php echo $options['header']['fc_left']; ?>',
+      center: '<?php echo $options['header']['fc_center']; ?>',
+      right: '<?php echo $options['header']['fc_right']; ?>'
     },
     eventClick: function(calEvent, jsEvent, view) {
-      <?php if ($options['fullcalendar_url_colorbox']): ?>
+      <?php if ($options['modules']['fc_url_colorbox']): ?>
       // Open in colorbox if exists, else open in new window.
       if ($.colorbox) {
         $.colorbox({href:calEvent.url,iframe:true, width:'80%', height: '80%'});
@@ -51,19 +51,27 @@ Drupal.behaviors.fullCalendar = function(context) {
       <?php endif; ?>
       return false;
     },
-    <?php if (!empty($options['fullcalendar_defaultyear'])): ?>
-      year: <?php echo $options['fullcalendar_defaultyear']; ?>,
+    <?php if (!empty($options['defaults']['fc_year'])): ?>
+      year: <?php echo $options['defaults']['fc_year']; ?>,
     <?php endif; ?>
-    <?php if (!empty($options['fullcalendar_defaultmonth'])): ?>
-      month: <?php echo $options['fullcalendar_defaultmonth'] - 1; ?>,
+    <?php if (!empty($options['defaults']['fc_month'])): ?>
+      month: <?php echo $options['defaults']['fc_month'] - 1; ?>,
     <?php endif; ?>
-    <?php if (!empty($options['fullcalendar_defaultday'])): ?>
-      day: <?php echo $options['fullcalendar_defaultday']; ?>,
+    <?php if (!empty($options['defaults']['fc_day'])): ?>
+      day: <?php echo $options['defaults']['fc_day']; ?>,
     <?php endif; ?>
-    timeFormat: {
-      agenda: '<?php echo $options['fullcalendar_timeformat']; ?>'
-    },
-    weekMode: '<?php echo $options['fullcalendar_weekmode']; ?>',
+    <?php if ($options['times']['fc_clock']): ?>
+      timeFormat: {
+        agenda: 'HH:mm{ - HH:mm}'
+      },
+      axisFormat: 'HH:mm',
+    <?php else: ?>
+      timeFormat: {
+        agenda: '<?php echo $options['times']['fc_timeformat']; ?>'
+      },
+    <?php endif; ?>
+    weekMode: '<?php echo $options['display']['fc_weekmode']; ?>',
+    firstDay: '<?php echo $options['display']['fc_firstday']; ?>',
     events: function(start, end, callback) {
       var events = [];
 
