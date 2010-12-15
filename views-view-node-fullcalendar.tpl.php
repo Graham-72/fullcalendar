@@ -27,10 +27,10 @@
       allDay="<?php echo $row['allDay']; ?>" start="<?php echo $row['start']; ?>" end="<?php echo $row['end']; ?>"
       editable="<?php echo $editable; ?>"><?php echo $node->title; ?></a>
 
-    : <?php echo format_date(strtotime($row['start'])); ?>
+    : <?php echo $row['start_formatted']; ?>
 
     <?php if (!$row['allDay'] && !empty($row['end'])): ?>
-      to <?php echo format_date(strtotime($row['end'])); ?>
+      to <?php echo $row['end_formatted']; ?>
     <?php endif; ?>
 
   <?php endforeach; ?>
