@@ -21,9 +21,11 @@
 <div id="fullcalendar-status"></div>
 <div id="fullcalendar"></div>
 <div id="fullcalendar-content">
-  <?php
-  foreach ($rows as $row) {
-    print $row;
-  }
-  ?>
+<?php foreach ($rows as $event): ?>
+  <?php if (!empty($event)): ?>
+  <div class="fullcalendar_event">
+    <?php print $event; ?>
+  </div>
+  <?php endif; ?>
+<?php endforeach; ?>
 </div>

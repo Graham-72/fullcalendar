@@ -19,19 +19,14 @@
  */
 
 ?>
-<div class="fullcalendar_event">
+<?php if (isset($empty_text)): ?>
+  <?php print $empty_text; ?>
+<?php elseif (!empty($data)): ?>
+  <h3 class="title"><?php echo $node->title; ?></h3>
   <?php foreach ($data as $row): ?>
-    <a class="fullcalendar_event_details" cn="<?php echo $className; ?>" href="<?php echo $url; ?>"
-      field="<?php echo $row['field']; ?>" index="<?php echo $row['index']; ?>"
-      nid="<?php echo $node->nid; ?>" title="<?php echo $node->title; ?>"
-      allDay="<?php echo $row['allDay']; ?>" start="<?php echo $row['start']; ?>" end="<?php echo $row['end']; ?>"
-      editable="<?php echo $editable; ?>"><?php echo $node->title; ?></a>
-
-    : <?php echo $row['start_formatted']; ?>
-
-    <?php if (!$row['allDay'] && !empty($row['end'])): ?>
-      to <?php echo $row['end_formatted']; ?>
-    <?php endif; ?>
-
+    <div class="fullcalendar-instance">
+      <?php print $row; ?>
+    </div>
   <?php endforeach; ?>
-</div>
+  </h3>
+<?php endif; ?>

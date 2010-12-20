@@ -114,6 +114,13 @@ function fullcalendar_theme() {
     'fullcalendar_classname' => array(
       'arguments' => array('node' => NULL),
     ),
+    'fullcalendar_link' => array(
+      'arguments' => array(
+        'node' => NULL,
+        'attributes' => NULL,
+        'index' => NULL,
+      ),
+    ),
   );
 }
 
@@ -159,6 +166,10 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
 
 //Prepare variables for template file invoked for node row type
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
+  if (isset($vars['view']->empty)) {
+    $vars['empty_text'] = $vars['view']->empty;
+    return;
+  }
   $nid = $vars['row']->{$vars['field_alias']};
   if (!is_numeric($nid)) {
     return;
@@ -169,29 +180,31 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   }
 
   // Allow resize/drag/drop of an event if user has proper permissions.
-  $vars['editable'] = _fullcalendar_update_access($node);
-  $vars['className'] = theme('fullcalendar_classname', $node);
+  $node->editable = _fullcalendar_update_access($node);
+  $node->class = theme('fullcalendar_classname', $node);
   $vars['node'] = $node;
   $vars['data'] = array(); // Contains the start, end & allDay values.
-  $index = 0; // Used to create $vars['data'] variable.
-  if ($url = $vars['options']['fullcalendar_url_field']) {
-    if (isset($node->{$url}[0]['value'])) {
-      $vars['url'] = $node->{$url}[0]['value'];
+  $node->url = 'node/' . $nid;
+  if ($url_field = $vars['options']['fullcalendar_url_field']) {
+    if (isset($node->{$url_field}[0]['value'])) {
+      $node->url = $node->{$url_field}[0]['value'];
     }
   }
-  if (empty($vars['url'])) {
-    $vars['url'] = url('node/' . $nid);
-  }
 
+  $title_field = $vars['options']['fullcalendar_title_field'];
+  if (!empty($title_field) && !empty($node->{$title_field}[0]['value'])) {
+    $node->title = $node->{$title_field}[0]['value'];
+  }
   $display_field = fullcalendar_date_fields($node);
   $field_names = trim(strip_tags($vars['options']['fullcalendar_date_fields']));
   if (!empty($field_names)) {
     foreach (explode("\n", $field_names) as $field_name) {
       $field_name = trim(strip_tags($field_name));
       if (($field_name == 'created') || ($field_name == 'changed')) {
-        $vars['data'][$index] = _fullcalendar_set_display_times($node, $field_name);
-        $vars['data'][$index]['index'] = 0;
-        return;
+        $attributes = _fullcalendar_set_display_times($node, $field_name);
+        $vars['data'][] = theme('fullcalendar_link', $node, $attributes);
+        $display_field = array();
+        break;
       }
       // If a date_type field exists
       if ($display_field[$field_name]) {
@@ -202,12 +215,11 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   }
   // Iterate through available fields, using the first one found.
   foreach ($display_field as $field_name => $field) {
-    foreach ($node->$field_name as $key => $item) {
-      $vars['data'][$index] = _fullcalendar_set_display_times($node, $field_name, $field, $item);
-      $vars['data'][$index]['index'] = $key;
-      $index++;
+    foreach ($node->$field_name as $index => $item) {
+      $attributes = _fullcalendar_set_display_times($node, $field_name, $field, $item);
+      $vars['data'][] = theme('fullcalendar_link', $node, $attributes, $index);
     }
-    return;
+    break;
   }
 }
 
@@ -239,11 +251,27 @@ function _fullcalendar_set_display_times($node, $field_name, $field = NULL, $ite
   return array(
     'field' => $field_name,
     'allDay' => date_field_all_day($field, $date1, $date2),
-    'start' => date_format($date1, DATE_FORMAT_DATETIME),
-    'end' => date_format($date2, DATE_FORMAT_DATETIME),
-    'start_formatted' => date_format_date($date1),
-    'end_formatted' => date_format_date($date2),
+    'start' => $date1,
+    'end' => $date2,
+    'nid' => $node->nid,
+    'cn' => $node->class,
+    'title' => $node->title,
+    'class' => 'fullcalendar_event_details',
+    'editable' => $node->editable,
   );
+}
+
+function theme_fullcalendar_link($node, $attributes, $index = 0) {
+  $text = date_format_date($attributes['start']);
+  if (!$attributes['allDay']) {
+    $text .= ' to ' . date_format_date($attributes['end']);
+  }
+
+  $attributes['index'] = $index;
+  $attributes['start'] = date_format($attributes['start'], DATE_FORMAT_DATETIME);
+  $attributes['end'] = date_format($attributes['end'], DATE_FORMAT_DATETIME);
+
+  return l($text, $node->url, array('attributes' => $attributes));
 }
 
 /**
