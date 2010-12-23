@@ -1,6 +1,7 @@
 (function ($) {
 
-Drupal.behaviors.fullCalendar = function(context) {
+Drupal.behaviors.fullCalendar = {
+attach: function(context) {
   $('#fullcalendar-content').hide(); //hide the failover display
   $('#fullcalendar').fullCalendar({
     defaultView: Drupal.settings.fullcalendar.defaultView,
@@ -86,6 +87,7 @@ Drupal.behaviors.fullCalendar = function(context) {
 
   //trigger a window resize so that calendar will redraw itself as it loads funny in some browsers occasionally
   $(window).resize();
+}
 };
 
 })(jQuery);

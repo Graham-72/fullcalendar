@@ -1,5 +1,6 @@
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
+#933622 by tim.plunkett: Port to Drupal 7.
 
 FullCalendar 6.x-1.x, xxxx-xx-xx
 --------------------------------
