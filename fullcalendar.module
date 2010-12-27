@@ -82,16 +82,17 @@ function fullcalendar_update($action, $node) {
   $minute_delta = $_POST['minute_delta'];
 
   if (!empty($field) && isset($index)) {
-    $old_start = $node->{$field}[$index]['value'];
-    $old_end = $node->{$field}[$index]['value2'];
+    $langcode = field_language('node', $node, $field);
+    $old_start = $node->{$field}[$langcode][$index]['value'];
+    $old_end = $node->{$field}[$langcode][$index]['value2'];
 
     switch ($action) {
       case 'drop':
-        $node->{$field}[$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
-        $node->{$field}[$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $node->{$field}[$langcode][$index]['value'] = date('Y-m-d H:i:s', strtotime($old_start . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $node->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
         break;
       case 'resize':
-        $node->{$field}[$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
+        $node->{$field}[$langcode][$index]['value2'] = date('Y-m-d H:i:s', strtotime($old_end . ' ' . $day_delta . ' days ' . $minute_delta . ' minutes'));
         break;
     }
 
