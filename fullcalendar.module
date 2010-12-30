@@ -118,11 +118,6 @@ function fullcalendar_update($action, $node) {
   }
 }
 
-//Pass through to template_preprocess_views_view_fields so that fields will be available to template file
-//function template_preprocess_views_view_fields_fullcalendar(&$vars) {
-//  template_preprocess_views_view_fields($vars);
-//}
-
 /**
  * Implementation of hook_theme().
  */
@@ -181,7 +176,9 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js', 'module');
 }
 
-//Prepare variables for template file invoked for node row type
+/**
+ * Prepare variables for template file invoked for node row type
+ */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   if (isset($vars['view']->empty)) {
     $vars['empty_text'] = $vars['view']->empty;
@@ -278,6 +275,9 @@ function _fullcalendar_set_display_times($node, $field_name, $field = NULL, $ite
   );
 }
 
+/**
+ * Set the text for the fallback display.
+ */
 function theme_fullcalendar_link($node, $attributes, $index = 0) {
   $text = date_format_date($attributes['start']);
   if (!$attributes['allDay']) {
@@ -310,6 +310,9 @@ function _fullcalendar_update_access($node) {
   return FALSE;
 }
 
+/**
+ * Find all date fields for a given node.
+ */
 function fullcalendar_date_fields($node) {
   $type = content_types($node->type);
   $fields = array();
@@ -358,7 +361,7 @@ function _fullcalendar_status() {
  * This can be used by other modules' hook_requirements() to ensure that the
  * proper version of Colorbox plugin is installed.
  *
- * @see version_compare
+ * @see version_compare()
  */
 function fullcalendar_get_version($fullcalendar_path = NULL) {
   $version = 0;
