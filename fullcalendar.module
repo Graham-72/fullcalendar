@@ -31,7 +31,7 @@ function fullcalendar_views_api() {
  */
 function fullcalendar_init() {
   drupal_add_js(fullcalendar_get_path());
-  drupal_add_css(FULLCALENDAR_PATH . '/fullcalendar.css');
+  drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
   drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
 
   // We need some jQuery UI files.
@@ -61,6 +61,14 @@ function fullcalendar_perm() {
 function fullcalendar_menu() {
   $items = array();
 
+  $items['admin/settings/fullcalendar'] = array(
+    'title' => 'FullCalendar',
+    'description' => 'Adjust FullCalendar settings.',
+    'file' => 'fullcalendar.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fullcalendar_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+  );
   $items['fullcalendar/ajax/update/%/%node'] = array(
     'title' => 'Update event',
     'description' => 'Save the updated event datetime.',
@@ -374,5 +382,6 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  * Return the path to the Colorbox plugin.
  */
 function fullcalendar_get_path() {
-  return FULLCALENDAR_PATH . '/fullcalendar.js';
+  $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
+  return variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
 }
