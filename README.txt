@@ -18,4 +18,4 @@ To use the fullcalendar module:
 KNOWN ISSUES:
 When displaying a repeating date field, each event might show up multiple times
 on each repeat instance. To solve this problem, change the 'Distinct' setting
-to yes in the Views display settings. This is a not a bug in FullCalendar.
+to yes in the Views display settings. This is not a bug in FullCalendar.

@@ -40,7 +40,7 @@ function fullcalendar_drush_help($section) {
 }
 
 /**
- * Command to download the FullCalendar plugin.
+ * Commands to download the FullCalendar plugin.
  */
 function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
   if (!drush_shell_exec('type unzip')) {
