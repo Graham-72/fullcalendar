@@ -50,7 +50,7 @@ function fullcalendar_views_api() {
  * Implementation of hook_init().
  */
 function fullcalendar_init() {
-  drupal_add_js(fullcalendar_get_path());
+  drupal_add_js(fullcalendar_get_js_path());
   drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
   drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
 
