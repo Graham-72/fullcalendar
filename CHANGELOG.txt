@@ -1,5 +1,6 @@
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
+#1032980 by tim.plunkett, aspilicious: Improved default styling for Bartik.
 #1013456 by tim.plunkett: Documentation clean-up.
 #1031924 by tim.plunkett | Jody Lynn: Fixed call to deprecated Drupal.parseJson.
 #980886 follow-up by tim.plunkett: Add call to new fullcalendar.custom.css.
