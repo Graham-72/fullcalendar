@@ -7,6 +7,16 @@
  */
 
 /**
+ * The default path to the FullCalender plugin.
+ */
+define('FULLCALENDAR_PATH', 'sites/all/libraries/fullcalendar');
+
+/**
+ * The minimum supported version of the FullCalender plugin.
+ */
+define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.10');
+
+/**
  * Implements hook_views_api().
  */
 function fullcalendar_views_api() {
@@ -17,18 +27,30 @@ function fullcalendar_views_api() {
 }
 
 /**
- * Implements hook_init().
+ * Implements hook_library().
  */
-function fullcalendar_init() {
-  $path = drupal_get_path('module', 'fullcalendar');
-
-  drupal_add_css($path . '/fullcalendar.css');
-  drupal_add_js($path . '/fullcalendar.js');
-
-  drupal_add_library('system', 'ui.draggable');
-  drupal_add_library('system', 'ui.droppable');
-  drupal_add_library('system', 'ui.resizable');
-  drupal_add_library('system', 'effects.highlight');
+function fullcalendar_library() {
+  $libraries['fullcalendar'] = array(
+    'title' => 'FullCalendar',
+    'website' => 'http://arshaw.com/fullcalendar',
+    'version' => FULLCALENDAR_MIN_PLUGIN_VERSION,
+    'js' => array(
+      FULLCALENDAR_PATH . '/fullcalendar.js' => array(),
+    ),
+    'css' => array(
+      FULLCALENDAR_PATH . '/fullcalendar.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
+    ),
+    'dependencies' => array(
+      array('system', 'ui.draggable'),
+      array('system', 'ui.droppable'),
+      array('system', 'ui.resizable'),
+      array('system', 'effects.highlight'),
+    ),
+  );
+  return $libraries;
 }
 
 /**
@@ -163,6 +185,7 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'agenda' => $vars['options']['times']['fc_timeformat'],
     'clock' => $vars['options']['times']['fc_clock'],
   );
+  drupal_add_library('fullcalendar', 'fullcalendar');
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js');
 }
@@ -321,4 +344,56 @@ function fullcalendar_date_fields($entity, $entity_type = 'node') {
     }
   }
   return $fields;
+}
+
+/**
+ * Checks FullCalendar dependencies
+ *
+ * @return
+ *   Array with TRUE/FALSE for each dependency.
+ *
+ * @see fullcalendar_requirements()
+ */
+function _fullcalendar_status() {
+  $status = array();
+  $status['fullcalendar_plugin'] = FALSE;
+
+  if (version_compare(fullcalendar_get_version(), FULLCALENDAR_MIN_PLUGIN_VERSION, '>=')) {
+    $status['fullcalendar_plugin'] = TRUE;
+  }
+
+  return $status;
+}
+
+/**
+ * Returns the version of FullCalender plugin that is installed.
+ *
+ * This can be used by other modules' hook_requirements() to ensure that the
+ * proper version of Colorbox plugin is installed.
+ *
+ * @see version_compare
+ */
+function fullcalendar_get_version($fullcalendar_path = NULL) {
+  $version = 0;
+  $pattern = '#FullCalendar v([0-9\.a-z]+)#';
+
+  // No file is passed in so use the default location.
+  if (is_null($fullcalendar_path)) {
+    $fullcalendar_path = fullcalendar_get_js_path();
+  }
+
+  // Return the version of FullCalendar plugin.
+  $fullcalendar_plugin = file_get_contents($fullcalendar_path, NULL, NULL, 0, 40);
+  if (preg_match($pattern, $fullcalendar_plugin, $matches)) {
+    $version = $matches[1];
+  }
+
+  return $version;
+}
+
+/**
+ * Returns the path to the FullCalender plugin.
+ */
+function fullcalendar_get_js_path() {
+  return FULLCALENDAR_PATH . '/fullcalendar.js';
 }
