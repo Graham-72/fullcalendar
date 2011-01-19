@@ -70,8 +70,7 @@ attach: function(context) {
     }
   });
 
-  var fullcalendarUpdate = function(response) {
-    var result = Drupal.parseJson(response);
+  var fullcalendarUpdate = function(result) {
     if ($('#fullcalendar-status').text() == '') {
       $('#fullcalendar-status').html(result.msg).slideDown();
     } else {

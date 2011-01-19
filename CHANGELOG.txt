@@ -1,5 +1,6 @@
 FullCalendar 7.x-1.x, xxxx-xx-xx
 --------------------------------
+#1031924 by tim.plunkett | Jody Lynn: Fixed call to deprecated Drupal.parseJson.
 #980886 follow-up by tim.plunkett: Add call to new fullcalendar.custom.css.
 #980810 by tim.plunkett: Added option to use fullcalendar.min.js.
 #980886 by aspilicious, tim.plunkett: Move FullCalendar plugin out of module into sites/all/libraries.
