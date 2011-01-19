@@ -60,7 +60,8 @@ function fullcalendar_library() {
 /**
  * Implements hook_permission().
  *
- * @return array An array of valid permissions for the fullcalendar module
+ * @return
+ *   An array of valid permissions for the FullCalendar module.
  */
 function fullcalendar_permission() {
   return array(
@@ -74,7 +75,8 @@ function fullcalendar_permission() {
 /**
  * Implements hook_menu().
  *
- * @return An array of menu items.
+ * @return
+ *   An array of menu items.
  */
 function fullcalendar_menu() {
   $items = array();
@@ -101,11 +103,12 @@ function fullcalendar_menu() {
 }
 
 /**
- * Save the updated fullcalendar event's datetime.
+ * Saves the updated FullCalendar event's datetime.
  *
- * @param string $action
+ * @param $action
  *   Value can be 'drop' or 'resize'.
- * @param object $node
+ * @param $node
+ *   The node that will be updated.
  */
 function fullcalendar_update($action, $node) {
   // Retrieve the post vars form the ajax call.
@@ -137,11 +140,6 @@ function fullcalendar_update($action, $node) {
   }
 }
 
-//Pass through to template_preprocess_views_view_fields so that fields will be available to template file
-//function template_preprocess_views_view_fields_fullcalendar(&$vars) {
-//  template_preprocess_views_view_fields($vars);
-//}
-
 /**
  * Implements hook_theme().
  */
@@ -161,7 +159,7 @@ function fullcalendar_theme() {
 }
 
 /**
- * Construct CSS classes for a node.
+ * Constructs CSS classes for a node.
  *
  * @param $node
  *   An object representing the node.
@@ -179,7 +177,7 @@ function theme_fullcalendar_classname($variables) {
 }
 
 /**
- * Pass settings to JavaScript.
+ * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_views_view_fullcalendar(&$vars) {
   $settings = array(
@@ -202,7 +200,9 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js');
 }
 
-//Prepare variables for template file invoked for node row type
+/**
+ * Prepares variables for template file invoked for node row type.
+ */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
   $entity_type = 'node';
   if (isset($vars['view']->empty_text)) {
@@ -268,13 +268,22 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
 }
 
 /**
- * Pass times through date modules date_formatter_process function to
- * translate them to the right display times.
+ * Translates times to the right display times.
  *
- * @param object $node
- * @param string $field_name
- * @param integer $index
- * @param array $vars
+ * This is done by passing times through date modules date_formatter_process
+ * function.
+ *
+ * @param $node
+ *   The node that will be updated.
+ * @param $field_name
+ *   The name of the date field.
+ * @param $field
+ *   The field structure for the date field.
+ * @param $item
+ *   The field value for the date field.
+ *
+ * @return
+ *   Array of event attributes to pass to the FullCalendar plugin.
  */
 function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $instance = NULL, $field = NULL, $item = NULL) {
   if (is_array($entity->$field_name)) {
@@ -299,6 +308,9 @@ function _fullcalendar_set_display_times($entity_type, $entity, $field_name, $in
   );
 }
 
+/**
+ * Sets the text for the fallback display.
+ */
 function theme_fullcalendar_link($variables) {
   $node = $variables['node'];
   $attributes = $variables['attributes'];
@@ -316,10 +328,14 @@ function theme_fullcalendar_link($variables) {
 }
 
 /**
- * Check if the user has access to update the given fullcalendar event.
+ * Checks if the user has access to update the given FullCalendar event.
  *
- * @param object $node
- * @return bool
+ * @param $node
+ *   The node that will be updated.
+ *
+ * @return
+ *   TRUE if the user is allowed to update the node;
+ *   FALSE if the user is not permitted to update the node.
  */
 function _fullcalendar_update_access($node) {
   global $user;
@@ -359,7 +375,7 @@ function fullcalendar_date_fields($entity, $entity_type = 'node') {
 }
 
 /**
- * Checks FullCalendar dependencies
+ * Checks FullCalendar dependencies.
  *
  * @return
  *   Array with TRUE/FALSE for each dependency.
