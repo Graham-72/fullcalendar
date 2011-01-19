@@ -35,10 +35,10 @@ function fullcalendar_library() {
     'website' => 'http://arshaw.com/fullcalendar',
     'version' => FULLCALENDAR_MIN_PLUGIN_VERSION,
     'js' => array(
-      FULLCALENDAR_PATH . '/fullcalendar.js' => array(),
+      fullcalendar_get_js_path() => array(),
     ),
     'css' => array(
-      FULLCALENDAR_PATH . '/fullcalendar.css' => array(
+      variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css' => array(
         'type' => 'file',
         'media' => 'screen',
       ),
@@ -75,6 +75,14 @@ function fullcalendar_permission() {
 function fullcalendar_menu() {
   $items = array();
 
+  $items['admin/config/fullcalendar'] = array(
+    'title' => 'FullCalendar',
+    'description' => 'Adjust FullCalendar settings.',
+    'file' => 'fullcalendar.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('fullcalendar_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+  );
   $items['fullcalendar/ajax/update/%/%node'] = array(
     'title' => 'Update event',
     'description' => 'Save the updated event datetime.',
@@ -395,5 +403,6 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  * Returns the path to the FullCalender plugin.
  */
 function fullcalendar_get_js_path() {
-  return FULLCALENDAR_PATH . '/fullcalendar.js';
+  $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
+  return variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
 }

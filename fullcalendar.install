@@ -35,3 +35,11 @@ function fullcalendar_requirements($phase) {
 
   return $requirements;
 }
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function fullcalendar_uninstall() {
+  variable_del('fullcalendar_path');
+  variable_del('fullcalendar_compression_type');
+}
