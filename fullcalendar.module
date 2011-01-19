@@ -42,6 +42,10 @@ function fullcalendar_library() {
         'type' => 'file',
         'media' => 'screen',
       ),
+      drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
     ),
     'dependencies' => array(
       array('system', 'ui.draggable'),
