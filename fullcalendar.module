@@ -81,7 +81,15 @@ function fullcalendar_permission() {
 function fullcalendar_menu() {
   $items = array();
 
-  $items['admin/config/fullcalendar'] = array(
+  $items['admin/config/calendar'] = array(
+    'title' => 'Calendar',
+    'description' => 'Settings for calendars.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/calendar/fullcalendar'] = array(
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
     'file' => 'fullcalendar.admin.inc',
