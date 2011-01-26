@@ -3,7 +3,7 @@
 Drupal.behaviors.fullCalendar = {
 attach: function(context) {
   $('#fullcalendar-content').hide(); //hide the failover display
-  $('#fullcalendar').fullCalendar({
+  $('#fullcalendar').once().fullCalendar({
     defaultView: Drupal.settings.fullcalendar.defaultView,
     theme: Drupal.settings.fullcalendar.theme,
     header: {
