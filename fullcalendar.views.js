@@ -58,7 +58,7 @@ attach: function(context) {
             start: $(this).attr('start'),
             end: $(this).attr('end'),
             url: $(this).attr('href'),
-            allDay: ($(this).attr('allDay') == '1'),
+            allDay: ($(this).attr('allDay') === '1'),
             className: $(this).attr('cn'),
             editable: $(this).attr('editable')
           });
@@ -82,13 +82,13 @@ attach: function(context) {
   });
 
   var fullcalendarUpdate = function(result) {
-    if ($('#fullcalendar-status').text() == '') {
+    if ($('#fullcalendar-status').text() === '') {
       $('#fullcalendar-status').html(result.msg).slideDown();
     } else {
       $('#fullcalendar-status').html(result.msg).effect('highlight', {}, 5000);
     }
     return false;
-  }
+  };
 
   $('.fullcalendar-status-close').live('click', function() {
     $('#fullcalendar-status').slideUp();
