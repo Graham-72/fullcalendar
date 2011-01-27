@@ -274,11 +274,15 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Iterate through available fields, using the first one found.
   foreach ($display_field as $field_name => $field) {
     $instance = field_info_instance($entity_type, $field_name, $node->type);
-    foreach (field_get_items($entity_type, $node, $field_name) as $index => $item) {
-      $attributes = _fullcalendar_set_display_times($entity_type, $node, $field_name, $instance, $field, $item);
-      $vars['data'][] = theme('fullcalendar_link',
-        array('node' => $node, 'attributes' => $attributes, 'index' => $index)
-      );
+    $items = field_get_items($entity_type, $node, $field_name);
+    if (!empty($items)) {
+      foreach ($items as $index => $item) {
+        $vars['data'][] = theme('fullcalendar_link', array(
+          'node' => $node,
+          'attributes' => _fullcalendar_set_display_times($entity_type, $node, $field_name, $instance, $field, $item),
+          'index' => $index,
+        ));
+      }
     }
     break;
   }
