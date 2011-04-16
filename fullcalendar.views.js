@@ -43,7 +43,7 @@ Drupal.behaviors.fullCalendar = function(context) {
       dayNamesShort: settings.dayNamesShort,
       allDayText: settings.allDayText,
       buttonText: {
-        today:  settings.todayString,
+        today: settings.todayString,
         day: settings.dayString,
         week: settings.weekString,
         month: settings.monthString
@@ -51,7 +51,7 @@ Drupal.behaviors.fullCalendar = function(context) {
       events: function(start, end, callback) {
         var events = [];
 
-        $(index).find('.fullcalendar_event_details').each(function() {
+        $(index).find('.fullcalendar-event-details').each(function() {
           events.push({
             field: $(this).attr('field'),
             index: $(this).attr('index'),
