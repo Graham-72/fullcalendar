@@ -158,9 +158,6 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'left' => $vars['options']['header']['fc_left'],
     'center' => $vars['options']['header']['fc_center'],
     'right' => $vars['options']['header']['fc_right'],
-    'year' => $vars['options']['defaults']['fc_year'],
-    'month' => $vars['options']['defaults']['fc_month'],
-    'day' => $vars['options']['defaults']['fc_day'],
     'agenda' => $vars['options']['times']['fc_timeformat'],
     'clock' => $vars['options']['times']['fc_clock'],
     'monthNames' => array_values(date_month_names(TRUE)),
@@ -173,6 +170,13 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
     'monthString' => t('Month'),
     'todayString' => t('Today'),
   );
+
+  if ($vars['options']['times']['fc_default_date']) {
+    $settings['year'] = $vars['options']['times']['fc_date']['year'];
+    $settings['month'] = $vars['options']['times']['fc_date']['month'];
+    $settings['day'] = $vars['options']['times']['fc_date']['day'];
+  }
+
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js', 'module');
 }
