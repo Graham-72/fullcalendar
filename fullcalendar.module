@@ -92,6 +92,7 @@ function fullcalendar_update($action, $node) {
   // Retrieve the post vars form the ajax call.
   $field = $_POST['field'];
   $index = $_POST['index'];
+  $dom_id = $_POST['dom_id'];
   $all_day = isset($_POST['all_day']) ? $_POST['all_day'] : '';
   $day_delta = $_POST['day_delta'];
   $minute_delta = $_POST['minute_delta'];
@@ -113,7 +114,7 @@ function fullcalendar_update($action, $node) {
     // Save the new start/end values.
     node_save($node);
 
-    drupal_json(array('msg' => 'The new event time has been saved. [<a href="javascript:void(0);" class="fullcalendar-status-close">close</a>]'));
+    drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $dom_id));
   }
 }
 
@@ -149,32 +150,39 @@ function theme_fullcalendar_classname($node) {
  * Pass settings to JavaScript.
  */
 function template_preprocess_views_view_fullcalendar(&$vars) {
+  $vars['options']['dom_id'] = '.view-dom-id-' . $vars['id'];
+  fullcalendar_get_settings($vars['options']);
+}
+
+function fullcalendar_get_settings($options) {
   $settings = array(
-    'defaultView' => $vars['options']['display']['fc_view'],
-    'firstDay' => $vars['options']['display']['fc_firstday'],
-    'weekMode' => $vars['options']['display']['fc_weekmode'],
-    'theme' => $vars['options']['modules']['fc_theme'],
-    'colorbox' => $vars['options']['modules']['fc_url_colorbox'],
-    'left' => $vars['options']['header']['fc_left'],
-    'center' => $vars['options']['header']['fc_center'],
-    'right' => $vars['options']['header']['fc_right'],
-    'agenda' => $vars['options']['times']['fc_timeformat'],
-    'clock' => $vars['options']['times']['fc_clock'],
-    'monthNames' => array_values(date_month_names(TRUE)),
-    'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
-    'dayNames' => date_week_days(TRUE),
-    'dayNamesShort' => date_week_days_abbr(TRUE),
-    'allDayText' => t('All day'),
-    'dayString' => t('Day'),
-    'weekString' => t('Week'),
-    'monthString' => t('Month'),
-    'todayString' => t('Today'),
+    $options['dom_id'] => array(
+      'defaultView' => $vars['options']['display']['fc_view'],
+      'firstDay' => $vars['options']['display']['fc_firstday'],
+      'weekMode' => $vars['options']['display']['fc_weekmode'],
+      'theme' => $vars['options']['modules']['fc_theme'],
+      'colorbox' => $vars['options']['modules']['fc_url_colorbox'],
+      'left' => $vars['options']['header']['fc_left'],
+      'center' => $vars['options']['header']['fc_center'],
+      'right' => $vars['options']['header']['fc_right'],
+      'agenda' => $vars['options']['times']['fc_timeformat'],
+      'clock' => $vars['options']['times']['fc_clock'],
+      'monthNames' => array_values(date_month_names(TRUE)),
+      'monthNamesShort' => array_values(date_month_names_abbr(TRUE)),
+      'dayNames' => date_week_days(TRUE),
+      'dayNamesShort' => date_week_days_abbr(TRUE),
+      'allDayText' => t('All day'),
+      'dayString' => t('Day'),
+      'weekString' => t('Week'),
+      'monthString' => t('Month'),
+      'todayString' => t('Today'),
+    ),
   );
 
   if ($vars['options']['times']['fc_default_date']) {
-    $settings['year'] = $vars['options']['times']['fc_date']['year'];
-    $settings['month'] = $vars['options']['times']['fc_date']['month'];
-    $settings['day'] = $vars['options']['times']['fc_date']['day'];
+    $settings[$options['dom_id']]['year'] = $options['times']['fc_date']['year'];
+    $settings[$options['dom_id']]['month'] = $options['times']['fc_date']['month'];
+    $settings[$options['dom_id']]['day'] = $options['times']['fc_date']['day'];
   }
 
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
@@ -278,7 +286,7 @@ function _fullcalendar_set_display_times($node, $field_name, $field, $item, $ind
     'nid' => $node->nid,
     'cn' => $node->class,
     'title' => $node->title,
-    'class' => 'fullcalendar_event_details',
+    'class' => 'fullcalendar-event-details',
     'editable' => $node->editable,
   );
   $text = date_format_date($date1);
