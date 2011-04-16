@@ -125,13 +125,6 @@ function fullcalendar_theme() {
     'fullcalendar_classname' => array(
       'arguments' => array('node' => NULL),
     ),
-    'fullcalendar_link' => array(
-      'arguments' => array(
-        'node' => NULL,
-        'attributes' => NULL,
-        'index' => NULL,
-      ),
-    ),
   );
 }
 
@@ -188,6 +181,10 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
  * Prepare variables for template file invoked for node row type
  */
 function template_preprocess_views_view_node_fullcalendar(&$vars) {
+
+  // Get all the fields from the view.
+  $fields = $vars['view']->display_handler->get_field_labels();
+
   if (isset($vars['view']->empty_text)) {
     $vars['empty_text'] = $vars['view']->empty_text;
     return;
@@ -204,44 +201,42 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
   // Allow resize/drag/drop of an event if user has proper permissions.
   $node->editable = _fullcalendar_update_access($node);
   $node->class = theme('fullcalendar_classname', $node);
+
   $vars['node'] = $node;
   $vars['data'] = array(); // Contains the start, end & allDay values.
+
+  // Default URL.
   $node->url = 'node/' . $nid;
-  if ($url_field = $vars['options']['fullcalendar_url_field']) {
-    if (isset($node->{$url_field}[0]['value'])) {
-      $node->url = $node->{$url_field}[0]['value'];
+
+  // Fetch custom URL if needed.
+  if (!empty($vars['options']['custom']['fc_url'])) {
+    if ($url_field = $vars['options']['custom']['fc_url_field']) {
+      if (isset($node->{$url_field})) {
+        $node->url = $node->{$url_field};
+      }
     }
   }
 
-  $title_field = $vars['options']['fullcalendar_title_field'];
-  if (!empty($title_field) && !empty($node->{$title_field}[0]['value'])) {
-    $node->title = $node->{$title_field}[0]['value'];
-  }
-  $display_field = fullcalendar_date_fields($node);
-  $field_names = trim(strip_tags($vars['options']['fullcalendar_date_fields']));
-  if (!empty($field_names)) {
-    foreach (explode("\n", $field_names) as $field_name) {
-      $field_name = trim(strip_tags($field_name));
-      if (($field_name == 'created') || ($field_name == 'changed')) {
-        $attributes = _fullcalendar_set_display_times($node, $field_name);
-        $vars['data'][] = theme('fullcalendar_link', $node, $attributes);
-        $display_field = array();
-        break;
-      }
-      // If a date_type field exists
-      if ($display_field[$field_name]) {
-        $display_field = array($field_name => $display_field[$field_name]);
-        break;
-      }
+  // Fetch custom title if needed.
+  if (!empty($vars['options']['custom']['fctitle'])) {
+    $title_field = $vars['options']['custom']['fc_title_field'];
+    if (!empty($title_field) && !empty($node->{$title_field})) {
+      $node->title = $node->{$title_field};
     }
   }
+
+  // Fetch custom dates if needed.
+  if (!empty($vars['options']['custom']['fc_date'])) {
+    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_fields']);
+  }
+
   // Iterate through available fields, using the first one found.
-  foreach ($display_field as $field_name => $field) {
-    foreach ($node->$field_name as $index => $item) {
-      $attributes = _fullcalendar_set_display_times($node, $field_name, $field, $item);
-      $vars['data'][] = theme('fullcalendar_link', $node, $attributes, $index);
+  foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
+    foreach ($node->{$field['field_name']} as $index => $item) {
+      if (!empty($item['value'])) {
+        $vars['data'][] = _fullcalendar_set_display_times($node, $field['field_name'], $field, $item, $index);
+      }
     }
-    break;
   }
 }
 
@@ -254,7 +249,7 @@ function template_preprocess_views_view_node_fullcalendar(&$vars) {
  * @param integer $index
  * @param array $vars
  */
-function _fullcalendar_set_display_times($node, $field_name, $field = NULL, $item = NULL) {
+function _fullcalendar_set_display_times($node, $field_name, $field, $item, $index) {
   if (is_array($node->$field_name)) {
     $dfp_info = array(
       '#node' => $node,
@@ -270,31 +265,22 @@ function _fullcalendar_set_display_times($node, $field_name, $field = NULL, $ite
     $date1 = date_make_date($node->$field_name, date_default_timezone(), DATE_UNIX);
     $date2 = $date1;
   }
-  return array(
+  $attributes = array(
     'field' => $field_name,
     'allDay' => date_field_all_day($field, $date1, $date2),
-    'start' => $date1,
-    'end' => $date2,
+    'start' => date_format($date1, DATE_FORMAT_DATETIME),
+    'end' => date_format($date2, DATE_FORMAT_DATETIME),
+    'index' => $index,
     'nid' => $node->nid,
     'cn' => $node->class,
     'title' => $node->title,
     'class' => 'fullcalendar_event_details',
     'editable' => $node->editable,
   );
-}
-
-/**
- * Set the text for the fallback display.
- */
-function theme_fullcalendar_link($node, $attributes, $index = 0) {
-  $text = date_format_date($attributes['start']);
+  $text = date_format_date($date1);
   if (!$attributes['allDay']) {
-    $text .= ' to ' . date_format_date($attributes['end']);
+    $text .= ' to ' . date_format_date($date2);
   }
-
-  $attributes['index'] = $index;
-  $attributes['start'] = date_format($attributes['start'], DATE_FORMAT_DATETIME);
-  $attributes['end'] = date_format($attributes['end'], DATE_FORMAT_DATETIME);
 
   return l($text, $node->url, array('attributes' => $attributes));
 }
@@ -319,14 +305,17 @@ function _fullcalendar_update_access($node) {
 }
 
 /**
- * Find all date fields for a given node.
+ * Filter the date fields.
+ *
+ * @param $view_fields
+ *   Array of possible date fields.
  */
-function fullcalendar_date_fields($node) {
-  $type = content_types($node->type);
+function fullcalendar_date_fields($view_fields) {
   $fields = array();
-  foreach ($type['fields'] as $field_name => $field) {
-    if (in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
-      $fields[$field_name] = $field;
+  foreach($view_fields as $field_name => $machine_name) {
+    $content_field = content_fields(str_replace("_value", "", $field_name));
+    if (in_array($content_field['type'], array('date', 'datestamp', 'datetime'))) {
+      $fields[$field_name] = $content_field;
     }
   }
   return $fields;

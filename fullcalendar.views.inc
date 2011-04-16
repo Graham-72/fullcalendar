@@ -54,11 +54,11 @@ function fullcalendar_views_plugins() {
         'parent' => '',
       ),
       'fullcalendar_node' => array(
-        'title' => t('Node - FullCalendar'),
+        'title' => t('Fields (FullCalendar)'),
         'help' => t('For use with FullCalendar style'),
         'handler' => 'views_plugin_node_fullcalendar',
         'theme' => 'views_view_node_fullcalendar',
-        'uses fields' => FALSE,
+        'uses fields' => TRUE,
         'uses options' => TRUE,
         'type' => 'normal',
       ),

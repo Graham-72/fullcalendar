@@ -17,31 +17,75 @@ class views_plugin_node_fullcalendar extends views_plugin_row {
 
   function option_definition() {
     $options = parent::option_definition();
-    $options['fullcalendar_url_field'] = array('default' => '');
-    $options['fullcalendar_date_fields'] = array('default' => '');
-    $options['fullcalendar_title_field'] = array('default' => '');
+    $options['custom'] = array(
+      'contains' => array(
+        'fc_title_field' => array('default' => ''),
+        'fc_url_field' => array('default' => ''),
+        'fc_date_fields' => array('default' => ''),
+        'fc_title' => array('default' => FALSE),
+        'fc_url' => array('default' => FALSE),
+        'fc_date' => array('default' => FALSE),
+      ),
+    );
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    $form['fullcalendar_date_fields'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Date Fields'),
-      '#default_value' => $this->options['fullcalendar_date_fields'],
-      '#description' => t('Normally this plugin uses the first node field that is either a date or a datetime field type. However, if you wish to override this behavior, please enter the names of the fields to use instead. For example "field_scheduled_for". Enter one per line. They will be searched in the order listed. Enter "created" or "changed" to use the respective node timestamps.'),
+    $field_options = $this->display->handler->get_field_labels();
+    $date_fields = array_intersect_key($field_options, fullcalendar_date_fields($field_options));
+
+    $form['custom'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Customize fields'),
+      '#description' => t('Add fields to the view in order to customize fields below.'),
+      '#attributes' => array(
+        'class' => 'clear-block',
+      ),
+     );
+    $form['custom']['fc_title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use a custom event title.'),
+      '#default_value' => $this->options['custom']['fc_title'],
     );
-    $form['fullcalendar_title_field'] = array(
-      '#type' => 'textfield',
+    $form['custom']['fc_title_field'] = array(
+      '#type' => 'select',
       '#title' => t('Title Field'),
-      '#default_value' => $this->options['fullcalendar_title_field'],
-      '#description' => t('The title of the event to be displayed. If blank, the node title will be used. For example: "field_event_title".'),
+      '#options' => $field_options,
+      '#default_value' => $this->options['custom']['fc_title_field'],
+      '#description' => t('Choose the field with the custom title.'),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-row-options-custom-fc-title' => array(1)),
     );
-    $form['fullcalendar_url_field'] = array(
-      '#type' => 'textfield',
+    $form['custom']['fc_url'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use a custom event redirect URL.'),
+      '#default_value' => $this->options['custom']['fc_url'],
+    );
+    $form['custom']['fc_url_field'] = array(
+      '#type' => 'select',
       '#title' => t('URL Field'),
-      '#default_value' => $this->options['fullcalendar_url_field'],
-      '#description' => t('If the calendar items should not link directly to the node, enter the name of the cck field to use for the url instead. For example: "field_url".'),
+      '#options' => $field_options,
+      '#default_value' => $this->options['custom']['fc_url_field'],
+      '#description' => t('Choose the field with the custom link.'),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-row-options-custom-fc-url' => array(1)),
+    );
+    $form['custom']['fc_date'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use a custom date field.'),
+      '#default_value' => $this->options['custom']['fc_date'],
+    );
+    $form['custom']['fc_date_fields'] = array(
+      '#type' => 'select',
+      '#title' => t('Date Fields'),
+      '#options' => $date_fields,
+      '#default_value' => $this->options['custom']['fc_date_fields'],
+      '#description' => t('Select one or more date fields.'),
+      '#multiple' => TRUE,
+      '#size' => count($date_fields),
+      '#process' => array('form_process_select', 'views_process_dependency'),
+      '#dependency' => array('edit-row-options-custom-fc-date' => array(1)),
     );
   }
 
