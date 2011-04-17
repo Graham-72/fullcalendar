@@ -114,7 +114,7 @@ function fullcalendar_update($action, $node) {
     // Save the new start/end values.
     node_save($node);
 
-    drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $dom_id));
+    drupal_json(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => 'fullcalendar-status-close'))) . ']', 'dom_id' => $dom_id));
   }
 }
 
