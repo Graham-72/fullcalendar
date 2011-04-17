@@ -19,7 +19,15 @@ Drupal.behaviors.fullCalendar = function(context) {
         if (settings.colorbox) {
           // Open in colorbox if exists, else open in new window.
           if ($.colorbox) {
-            $.colorbox({href:calEvent.url, iframe:true, width:'80%', height:'80%'});
+            var url = calEvent.url;
+            if(settings.colorboxClass !== '') {
+              url += ' ' + settings.colorboxClass;
+            }
+            $.colorbox({
+              href: url,
+              width: settings.colorboxWidth,
+              height: settings.colorboxHeight
+            });
           } else {
             window.open(calEvent.url);
           }
