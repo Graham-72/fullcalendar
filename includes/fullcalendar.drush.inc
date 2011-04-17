@@ -8,7 +8,6 @@
 /**
  * The FullCalendar plugin URI.
  */
-include_once('fullcalendar.module');
 define('FULLCALENDAR_DOWNLOAD_URI', 'http://arshaw.com/fullcalendar/downloads/fullcalendar-' . FULLCALENDAR_MIN_PLUGIN_VERSION . '.zip');
 
 /**
@@ -95,4 +94,3 @@ function drush_fullcalendar_plugin($path = 'sites/all/libraries') {
     drush_log(dt('Drush was unable to download the FullCalendar plugin to @path', array('@path' => $path)), 'error');
   }
 }
-

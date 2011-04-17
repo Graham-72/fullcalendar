@@ -21,7 +21,7 @@ define('FULLCALENDAR_MAX_JQUERYUI_VERSION', '1.8+');
 function fullcalendar_views_api() {
   return array(
     'api' => '2',
-    'path' => drupal_get_path('module', 'fullcalendar'),
+    'path' => drupal_get_path('module', 'fullcalendar') . '/includes/views',
   );
 }
 
@@ -46,6 +46,7 @@ function fullcalendar_menu() {
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
     'file' => 'fullcalendar.admin.inc',
+    'file path' => drupal_get_path('module', 'fullcalendar') . '/includes',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('fullcalendar_admin_settings'),
     'access arguments' => array('administer site configuration'),
@@ -128,14 +129,6 @@ function theme_fullcalendar_classname($node) {
   return implode(' ', $className);
 }
 
-/**
- * Pass settings to JavaScript.
- */
-function template_preprocess_views_view_fullcalendar(&$vars) {
-  $vars['options']['dom_id'] = '.view-dom-id-' . $vars['id'];
-  fullcalendar_get_settings($vars['options']);
-}
-
 function fullcalendar_get_settings($options) {
   global $language;
 
@@ -175,10 +168,10 @@ function fullcalendar_get_settings($options) {
   }
 
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
-  drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js', 'module');
+  drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.views.js', 'module');
   drupal_add_js(fullcalendar_get_path());
   drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
-  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
+  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/css/fullcalendar.theme.css');
 
   // We need some jQuery UI files.
   $files = array(
@@ -188,69 +181,6 @@ function fullcalendar_get_settings($options) {
     'effects.highlight',
   );
   jquery_ui_add($files);
-}
-
-/**
- * Prepare variables for template file invoked for node row type
- */
-function template_preprocess_views_view_node_fullcalendar(&$vars) {
-
-  // Get all the fields from the view.
-  $fields = $vars['view']->display_handler->get_field_labels();
-
-  if (isset($vars['view']->empty_text)) {
-    $vars['empty_text'] = $vars['view']->empty_text;
-    return;
-  }
-  $nid = $vars['row']->{$vars['field_alias']};
-  if (!is_numeric($nid)) {
-    return;
-  }
-  $node = node_load($nid);
-  if (empty($node)) {
-    return;
-  }
-
-  // Allow resize/drag/drop of an event if user has proper permissions.
-  $node->editable = _fullcalendar_update_access($node);
-  $node->class = theme('fullcalendar_classname', $node);
-
-  $vars['node'] = $node;
-  $vars['data'] = array(); // Contains the start, end & allDay values.
-
-  // Default URL.
-  $node->url = 'node/' . $nid;
-
-  // Fetch custom URL if needed.
-  if (!empty($vars['options']['custom']['fc_url'])) {
-    if ($url_field = $vars['options']['custom']['fc_url_field']) {
-      if (isset($node->{$url_field})) {
-        $node->url = $node->{$url_field};
-      }
-    }
-  }
-
-  // Fetch custom title if needed.
-  if (!empty($vars['options']['custom']['fctitle'])) {
-    $title_field = $vars['options']['custom']['fc_title_field'];
-    if (!empty($title_field) && !empty($node->{$title_field})) {
-      $node->title = $node->{$title_field};
-    }
-  }
-
-  // Fetch custom dates if needed.
-  if (!empty($vars['options']['custom']['fc_date'])) {
-    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_fields']);
-  }
-
-  // Iterate through available fields, using the first one found.
-  foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
-    foreach ($node->{$field['field_name']} as $index => $item) {
-      if (!empty($item['value'])) {
-        $vars['data'][] = _fullcalendar_set_display_times($node, $field['field_name'], $field, $item, $index);
-      }
-    }
-  }
 }
 
 /**
@@ -311,7 +241,7 @@ function _fullcalendar_update_access($node) {
       || user_access('update any fullcalendar event')
       || user_access('edit any ' . $node->type . ' content')
       || (user_access('edit own ' . $node->type . ' content') && $node->uid == $user->uid))) {
-        return TRUE;
+    return TRUE;
   }
 
   return FALSE;
