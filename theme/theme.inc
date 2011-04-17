@@ -3,7 +3,7 @@
 /**
  * Pass settings to JavaScript.
  */
-function template_preprocess_views_view_fullcalendar(&$vars) {
+function template_preprocess_fullcalendar(&$vars) {
   $vars['options']['dom_id'] = '.view-dom-id-' . $vars['id'];
   fullcalendar_get_settings($vars['options']);
 }
@@ -11,7 +11,7 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
 /**
  * Prepare variables for template file invoked for node row type
  */
-function template_preprocess_views_view_node_fullcalendar(&$vars) {
+function template_preprocess_fullcalendar_fields(&$vars) {
 
   // Get all the fields from the view.
   $fields = $vars['view']->display_handler->get_field_labels();
