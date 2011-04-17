@@ -14,6 +14,7 @@ Drupal.behaviors.fullCalendar = function(context) {
         center: settings.center,
         right: settings.right
       },
+      isRTL: settings.isRTL === '1',
       eventClick: function(calEvent, jsEvent, view) {
         if (settings.colorbox) {
           // Open in colorbox if exists, else open in new window.

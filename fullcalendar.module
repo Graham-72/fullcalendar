@@ -155,6 +155,8 @@ function template_preprocess_views_view_fullcalendar(&$vars) {
 }
 
 function fullcalendar_get_settings($options) {
+  global $language;
+
   $settings = array(
     $options['dom_id'] => array(
       'defaultView' => $options['display']['fc_view'],
@@ -176,6 +178,7 @@ function fullcalendar_get_settings($options) {
       'weekString' => t('Week'),
       'monthString' => t('Month'),
       'todayString' => t('Today'),
+      'isRTL' => $language->direction,
     ),
   );
 
