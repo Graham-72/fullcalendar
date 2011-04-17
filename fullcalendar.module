@@ -31,7 +31,7 @@ function fullcalendar_views_api() {
 function fullcalendar_init() {
   drupal_add_js(fullcalendar_get_path());
   drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
-  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
+  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/css/fullcalendar.theme.css');
 
   // We need some jQuery UI files.
   $files = array(
