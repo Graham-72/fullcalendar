@@ -31,6 +31,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1123398 by tim.plunkett: Add JS/CSS only when needed.
 #1050530 by aspilicious: Added target window.
 #1045114 by aspilicious: Improved UI strings.
 #910494 by aspilicious: Improved Colorbox support.

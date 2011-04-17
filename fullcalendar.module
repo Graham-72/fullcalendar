@@ -26,24 +26,6 @@ function fullcalendar_views_api() {
 }
 
 /**
- * Implementation of hook_init().
- */
-function fullcalendar_init() {
-  drupal_add_js(fullcalendar_get_path());
-  drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
-  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
-
-  // We need some jQuery UI files.
-  $files = array(
-    'ui.draggable',
-    'ui.droppable',
-    'ui.resizable',
-    'effects.highlight',
-  );
-  jquery_ui_add($files);
-}
-
-/**
  * Implementation of hook_perm().
  *
  * @return array An array of valid permissions for the fullcalendar module
@@ -194,6 +176,18 @@ function fullcalendar_get_settings($options) {
 
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.views.js', 'module');
+  drupal_add_js(fullcalendar_get_path());
+  drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
+  drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/fullcalendar.custom.css');
+
+  // We need some jQuery UI files.
+  $files = array(
+    'ui.draggable',
+    'ui.droppable',
+    'ui.resizable',
+    'effects.highlight',
+  );
+  jquery_ui_add($files);
 }
 
 /**
