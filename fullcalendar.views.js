@@ -28,11 +28,15 @@ Drupal.behaviors.fullCalendar = function(context) {
               width: settings.colorboxWidth,
               height: settings.colorboxHeight
             });
-          } else {
+          }
+        }
+        else {
+          if (settings.sameWindow) {
+            window.open(calEvent.url, '_self');
+          }
+          else {
             window.open(calEvent.url);
           }
-        } else {
-          window.open(calEvent.url);
         }
         return false;
       },
