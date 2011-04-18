@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Pass settings to JavaScript.
+ * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_fullcalendar(&$vars) {
   $vars['options']['dom_id'] = '.view-dom-id-' . $vars['id'];
@@ -9,7 +9,7 @@ function template_preprocess_fullcalendar(&$vars) {
 }
 
 /**
- * Prepare variables for template file invoked for node row type
+ * Prepares variables for template file invoked for node row type.
  */
 function template_preprocess_fullcalendar_fields(&$vars) {
 

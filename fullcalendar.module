@@ -9,10 +9,30 @@
  * The default path to the FullCalender plugin.
  */
 define('FULLCALENDAR_PATH', 'sites/all/libraries/fullcalendar');
+
+/**
+ * The minimum supported version of the FullCalender plugin.
+ */
 define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.9');
+
+/**
+ * The minimum supported jQuery version.
+ */
 define('FULLCALENDAR_MIN_JQUERY_VERSION', '1.3.2');
+
+/**
+ * The maximum supported jQuery version.
+ */
 define('FULLCALENDAR_MAX_JQUERY_VERSION', '1.4+');
+
+/**
+ * The minimum supported jQuery UI version.
+ */
 define('FULLCALENDAR_MIN_JQUERYUI_VERSION', '1.7.3');
+
+/**
+ * The maximum supported jQuery UI version.
+ */
 define('FULLCALENDAR_MAX_JQUERYUI_VERSION', '1.8+');
 
 /**
@@ -65,11 +85,12 @@ function fullcalendar_menu() {
 }
 
 /**
- * Save the updated fullcalendar event's datetime.
+ * Saves the updated fullcalendar event's datetime.
  *
- * @param string $action
+ * @param $action
  *   Value can be 'drop' or 'resize'.
- * @param object $node
+ * @param $node
+ *   The node that will be updated.
  */
 function fullcalendar_update($action, $node) {
   // Retrieve the post vars form the ajax call.
@@ -169,7 +190,7 @@ function fullcalendar_get_settings($options) {
 
   drupal_add_js(array('fullcalendar' => $settings), 'setting');
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.views.js', 'module');
-  drupal_add_js(fullcalendar_get_path());
+  drupal_add_js(fullcalendar_get_js_path());
   drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
   drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/css/fullcalendar.theme.css');
 
@@ -184,13 +205,22 @@ function fullcalendar_get_settings($options) {
 }
 
 /**
- * Pass times through date modules date_formatter_process function to
- * translate them to the right display times.
+ * Translates times to the right display times.
  *
- * @param object $node
- * @param string $field_name
- * @param integer $index
- * @param array $vars
+ * This is done by passing times through date modules date_formatter_process
+ * function.
+ *
+ * @param $node
+ *   The node that will be updated.
+ * @param $field_name
+ *   The name of the date field.
+ * @param $field
+ *   The field structure for the date field.
+ * @param $item
+ *   The field value for the date field.
+ *
+ * @return
+ *   Array of event attributes to pass to the FullCalendar plugin.
  */
 function _fullcalendar_set_display_times($node, $field_name, $field, $item, $index) {
   if (is_array($node->$field_name)) {
@@ -229,10 +259,14 @@ function _fullcalendar_set_display_times($node, $field_name, $field, $item, $ind
 }
 
 /**
- * Check if the user has access to update the given fullcalendar event.
+ * Checks if the user has access to update the given fullcalendar event.
  *
- * @param object $node
- * @return bool
+ * @param $node
+ *   The node that will be updated.
+ *
+ * @return
+ *   TRUE if the user is allowed to update the node;
+ *   FALSE if the user is not permitted to update the node.
  */
 function _fullcalendar_update_access($node) {
   global $user;
@@ -248,7 +282,7 @@ function _fullcalendar_update_access($node) {
 }
 
 /**
- * Filter the date fields.
+ * Filters the date fields.
  *
  * @param $view_fields
  *   Array of possible date fields.
@@ -265,10 +299,10 @@ function fullcalendar_date_fields($view_fields) {
 }
 
 /**
- * Check Colorbox dependencies, jQuery version and Colorbox plugin.
+ * Checks FullCalendar dependencies, jQuery version, and Colorbox plugin.
  *
  * @return
- *   array with TRUE/FALSE for each dependency.
+ *   Array with TRUE/FALSE for each dependency.
  *
  * @see fullcalendar_requirements()
  */
@@ -296,10 +330,10 @@ function _fullcalendar_status() {
 }
 
 /**
- * Return the version of Colorbox plugin that is installed.
+ * Returns the version of Fullcalender plugin that is installed.
  *
  * This can be used by other modules' hook_requirements() to ensure that the
- * proper version of Colorbox plugin is installed.
+ * proper version of FullCalender plugin is installed.
  *
  * @see version_compare()
  */
@@ -309,7 +343,7 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
 
   // No file is passed in so use the default location.
   if (is_null($fullcalendar_path)) {
-    $fullcalendar_path = fullcalendar_get_path();
+    $fullcalendar_path = fullcalendar_get_js_path();
   }
 
   // Return the version of Colorbox plugin.
@@ -322,9 +356,9 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
 }
 
 /**
- * Return the path to the Colorbox plugin.
+ * Returns the path to the FullCalander plugin.
  */
-function fullcalendar_get_path() {
+function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
   return variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
 }
