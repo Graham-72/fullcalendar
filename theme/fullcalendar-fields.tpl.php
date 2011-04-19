@@ -18,9 +18,7 @@
  */
 
 ?>
-<?php if (isset($empty_text)): ?>
-  <?php print $empty_text; ?>
-<?php elseif (!empty($data)): ?>
+<?php if (!empty($data)): ?>
   <h3 class="title"><?php echo $node->title; ?></h3>
   <?php foreach ($data as $row): ?>
     <div class="fullcalendar-instance">

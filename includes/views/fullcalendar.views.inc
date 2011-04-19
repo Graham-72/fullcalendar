@@ -56,3 +56,40 @@ function fullcalendar_views_plugins() {
     ),
   );
 }
+
+/**
+ * Implementation of hook_views_handlers().
+ */
+function fullcalendar_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'fullcalendar') . '/includes/views/handlers',
+    ),
+    'handlers' => array(
+      'fullcalendar_handler_area_empty' => array(
+        'parent' => 'views_handler_area',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_views_data().
+ */
+function fullcalendar_views_data() {
+  return array(
+    'fullcalendar' => array(
+      'table' => array(
+        'group' => t('FullCalendar'),
+        'join' => array('#global' => array()),
+      ),
+      'area' => array(
+        'title' => t('Empty calendar'),
+        'help' => t('Provide empty calendar.'),
+        'area' => array(
+          'handler' => 'fullcalendar_handler_area_empty',
+        ),
+      ),
+    ),
+  );
+}
