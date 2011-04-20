@@ -24,13 +24,6 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     return;
   }
 
-  // Get all the fields from the view.
-  $fields = $vars['view']->display_handler->get_field_labels();
-
-  if (isset($vars['view']->empty_text)) {
-    $vars['empty_text'] = $vars['view']->empty_text;
-    return;
-  }
   $nid = $vars['row']->{$vars['field_alias']};
   if (!is_numeric($nid)) {
     return;
@@ -74,17 +67,21 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   $vars['node'] = $node;
 
   // Fetch custom dates if needed.
+  $date_fields = fullcalendar_date_fields($vars['view']->field);
   if (!empty($vars['options']['custom']['fc_date'])) {
-    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_field']);
+    $date_fields = array_intersect_key($date_fields, $vars['options']['custom']['fc_date_field']);
   }
 
   $vars['data'] = array();
   // Iterate through available fields.
-  foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
-    foreach ($node->{$field['field_name']} as $index => $item) {
+  foreach ($date_fields as $field_name => $field) {
+    $field_name = str_replace('_value', '', $field_name);
+    $field = content_fields($field_name);
+    $value = (is_array($node->$field_name)) ? $node->$field_name : array($node->$field_name);
+    foreach ($value as $index => $item) {
       // Filter fields without value.
-      if (!empty($item['value'])) {
-        $vars['data'][] = _fullcalendar_set_display_times($node, $field['field_name'], $field, $item, $index);
+      if (!is_array($item) || !empty($item['value'])) {
+        $vars['data'][] = _fullcalendar_set_display_times($node, $field_name, $field, $item, $index);
       }
     }
   }

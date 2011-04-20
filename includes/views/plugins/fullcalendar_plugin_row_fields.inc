@@ -33,7 +33,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
     // Get the regular fields.
     $field_options = $this->display->handler->get_field_labels();
     // Get the date fields.
-    $date_fields = array_intersect_key($field_options, fullcalendar_date_fields($field_options));
+    $date_fields = _fullcalendar_parse_fields($this->display->handler);
 
     $form['custom'] = array(
       '#type' => 'fieldset',

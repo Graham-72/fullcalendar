@@ -267,18 +267,51 @@ function _fullcalendar_update_access($node) {
 /**
  * Filters the date fields.
  *
- * @param $view_fields
+ * @param $fields
  *   Array of possible date fields.
+ *
+ * @return
+ *   Array of valid date fields.
  */
-function fullcalendar_date_fields($view_fields) {
-  $fields = array();
-  foreach($view_fields as $field_name => $machine_name) {
-    $content_field = content_fields(str_replace("_value", "", $field_name));
-    if (in_array($content_field['type'], array('date', 'datestamp', 'datetime'))) {
-      $fields[$field_name] = $content_field;
+function fullcalendar_date_fields($fields) {
+  foreach ($fields as $id => $field_name) {
+    switch ($id) {
+      case 'created':
+      case 'changed':
+      case 'access':
+      case 'login':
+      case 'timestamp':
+        break;
+      default:
+        $field = content_fields(str_replace('_value', '', $id));
+        if (!in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
+          unset($fields[$id]);
+        }
     }
   }
   return $fields;
+}
+
+/**
+ * Helper function to resolve field_name and field_label.
+ *
+ * @param $display
+ *   Object representing the View display.
+ *
+ * @return
+ *  Array of date field labels, keyed by field_name.
+ */
+function _fullcalendar_parse_fields($display) {
+  $field_options = array();
+  foreach ($display->get_handlers('field') as $id => $field) {
+    if (isset($field->definition['field_name'])) {
+      $field_options[$id] = $field->definition['field_name'];
+    }
+    else {
+      $field_options[$id] = $field->definition['title'];
+    }
+  }
+  return array_intersect_key($display->get_field_labels(), fullcalendar_date_fields($field_options));
 }
 
 /**
