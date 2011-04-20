@@ -42,7 +42,11 @@ function template_preprocess_fullcalendar_fields(&$vars) {
 
   // Allow resize/drag/drop of an event if user has proper permissions.
   $node->editable = _fullcalendar_update_access($node);
-  $node->class = theme('fullcalendar_classname', $node);
+
+  // Create a string of class names.
+  $classes = module_invoke_all('fullcalendar_classes', $node);
+  drupal_alter('fullcalendar_classes', $classes, $node);
+  $node->class = implode(' ', array_unique($classes));
 
   // Default URL.
   $node->url = 'node/' . $nid;

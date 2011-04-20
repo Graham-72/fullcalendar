@@ -123,31 +123,14 @@ function fullcalendar_update($action, $node) {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_fullcalendar_classes().
  */
-function fullcalendar_theme() {
-  return array(
-    'fullcalendar_classname' => array(
-      'arguments' => array('node' => NULL),
-    ),
-  );
-}
-
-/**
- * Construct CSS classes for a node.
- *
- * @param $node
- *   An object representing the node.
- *
- * @return
- *   A string suitable for use as a CSS class.
- */
-function theme_fullcalendar_classname($node) {
-  $className = array(
+function fullcalendar_fullcalendar_classes($node) {
+  $classes = array(
     'fc-event-default',
     $node->type,
   );
-  return implode(' ', $className);
+  return $classes;
 }
 
 function fullcalendar_get_settings($options) {
