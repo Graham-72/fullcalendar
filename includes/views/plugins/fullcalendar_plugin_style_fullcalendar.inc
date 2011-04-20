@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains the fullcalendar style plugin.
+ * Contains the FullCalendar style plugin.
  */
 
 class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {

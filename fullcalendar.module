@@ -6,12 +6,12 @@
  */
 
 /**
- * The default path to the FullCalender plugin.
+ * The default path to the FullCalendar plugin.
  */
 define('FULLCALENDAR_PATH', 'sites/all/libraries/fullcalendar');
 
 /**
- * The minimum supported version of the FullCalender plugin.
+ * The minimum supported version of the FullCalendar plugin.
  */
 define('FULLCALENDAR_MIN_PLUGIN_VERSION', '1.4.9');
 
@@ -49,7 +49,7 @@ function fullcalendar_views_api() {
  * Implementation of hook_perm().
  *
  * @return
- *   An array of valid permissions for the fullcalendar module.
+ *   An array of valid permissions for the FullCalendar module.
  */
 function fullcalendar_perm() {
   return array('update any fullcalendar event');
@@ -350,10 +350,10 @@ function _fullcalendar_status() {
 }
 
 /**
- * Returns the version of Fullcalender plugin that is installed.
+ * Returns the version of FullCalendar plugin that is installed.
  *
  * This can be used by other modules' hook_requirements() to ensure that the
- * proper version of FullCalender plugin is installed.
+ * proper version of FullCalendar plugin is installed.
  *
  * @see version_compare()
  */
@@ -376,7 +376,7 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
 }
 
 /**
- * Returns the path to the FullCalander plugin.
+ * Returns the path to the FullCalendar plugin.
  */
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
