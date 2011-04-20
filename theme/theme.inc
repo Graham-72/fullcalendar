@@ -9,9 +9,13 @@ function template_preprocess_fullcalendar(&$vars) {
 }
 
 /**
- * Prepares variables for template file invoked for node row type.
+ * Prepares variables for template file invoked for row type.
  */
 function template_preprocess_fullcalendar_fields(&$vars) {
+  // Check if we have field data.
+  if (empty($vars['row'])) {
+    return;
+  }
 
   // Get all the fields from the view.
   $fields = $vars['view']->display_handler->get_field_labels();
@@ -33,37 +37,41 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   $node->editable = _fullcalendar_update_access($node);
   $node->class = theme('fullcalendar_classname', $node);
 
-  $vars['node'] = $node;
-  $vars['data'] = array(); // Contains the start, end & allDay values.
-
   // Default URL.
   $node->url = 'node/' . $nid;
 
   // Fetch custom URL if needed.
   if (!empty($vars['options']['custom']['fc_url'])) {
-    if ($url_field = $vars['options']['custom']['fc_url_field']) {
-      if (isset($node->{$url_field})) {
-        $node->url = $node->{$url_field};
-      }
+    $field_name = $vars['options']['custom']['fc_url_field'];
+    if (!empty($node->{$field_name})) {
+      $node->url = ltrim($node->{$field_name}, '/');
     }
   }
 
   // Fetch custom title if needed.
-  if (!empty($vars['options']['custom']['fctitle'])) {
-    $title_field = $vars['options']['custom']['fc_title_field'];
-    if (!empty($title_field) && !empty($node->{$title_field})) {
-      $node->title = $node->{$title_field};
+  if (!isset($node->title)) {
+    $node->title = '';
+  }
+  if (!empty($vars['options']['custom']['fc_title'])) {
+    $field_name = $vars['options']['custom']['fc_title_field'];
+    if (!empty($field_name) && !empty($node->{$field_name})) {
+      $node->title = $node->{$field_name};
     }
   }
 
+  // Node is built, add it to the preprocess variables.
+  $vars['node'] = $node;
+
   // Fetch custom dates if needed.
   if (!empty($vars['options']['custom']['fc_date'])) {
-    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_fields']);
+    $fields = array_intersect_key($fields, $vars['options']['custom']['fc_date_field']);
   }
 
-  // Iterate through available fields, using the first one found.
+  $vars['data'] = array();
+  // Iterate through available fields.
   foreach (fullcalendar_date_fields($fields) as $field_name => $field) {
     foreach ($node->{$field['field_name']} as $index => $item) {
+      // Filter fields without value.
       if (!empty($item['value'])) {
         $vars['data'][] = _fullcalendar_set_display_times($node, $field['field_name'], $field, $item, $index);
       }

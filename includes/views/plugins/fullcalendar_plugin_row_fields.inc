@@ -11,17 +11,16 @@
  * Most of the code on this object is in the theme function.
  */
 class fullcalendar_plugin_row_fields extends views_plugin_row {
-  // Basic properties that let the row style follow relationships.
+
   var $base_table = 'node';
   var $base_field = 'nid';
 
   function option_definition() {
-    $options = parent::option_definition();
     $options['custom'] = array(
       'contains' => array(
         'fc_title_field' => array('default' => ''),
         'fc_url_field' => array('default' => ''),
-        'fc_date_fields' => array('default' => ''),
+        'fc_date_field' => array('default' => ''),
         'fc_title' => array('default' => FALSE),
         'fc_url' => array('default' => FALSE),
         'fc_date' => array('default' => FALSE),
@@ -31,8 +30,9 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
   }
 
   function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
+    // Get the regular fields.
     $field_options = $this->display->handler->get_field_labels();
+    // Get the date fields.
     $date_fields = array_intersect_key($field_options, fullcalendar_date_fields($field_options));
 
     $form['custom'] = array(
@@ -42,7 +42,7 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#attributes' => array(
         'class' => 'clear-block',
       ),
-     );
+    );
     $form['custom']['fc_title'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use a custom event title'),
@@ -76,11 +76,11 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
       '#title' => t('Use a custom date field'),
       '#default_value' => $this->options['custom']['fc_date'],
     );
-    $form['custom']['fc_date_fields'] = array(
+    $form['custom']['fc_date_field'] = array(
       '#type' => 'select',
       '#title' => t('Date Fields'),
       '#options' => $date_fields,
-      '#default_value' => $this->options['custom']['fc_date_fields'],
+      '#default_value' => $this->options['custom']['fc_date_field'],
       '#description' => t('Select one or more date fields.'),
       '#multiple' => TRUE,
       '#size' => count($date_fields),

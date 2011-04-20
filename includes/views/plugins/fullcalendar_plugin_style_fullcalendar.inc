@@ -174,7 +174,7 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
         '#title' => t('Open events in colorbox'),
         '#default_value' => $this->options['modules']['fc_url_colorbox'],
       );
-     $form['modules']['fc_url_colorbox_class'] = array(
+      $form['modules']['fc_url_colorbox_class'] = array(
         '#type' => 'textfield',
         '#title' => t('Classname or ID selector'),
         '#default_value' => $this->options['modules']['fc_url_colorbox_class'],
