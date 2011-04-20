@@ -48,7 +48,8 @@ function fullcalendar_views_api() {
 /**
  * Implementation of hook_perm().
  *
- * @return array An array of valid permissions for the fullcalendar module
+ * @return
+ *   An array of valid permissions for the fullcalendar module.
  */
 function fullcalendar_perm() {
   return array('update any fullcalendar event');
@@ -57,7 +58,8 @@ function fullcalendar_perm() {
 /**
  * Implementation of hook_menu().
  *
- * @return An array of menu items.
+ * @return
+ *   An array of menu items.
  */
 function fullcalendar_menu() {
   $items = array();
@@ -85,7 +87,7 @@ function fullcalendar_menu() {
 }
 
 /**
- * Saves the updated fullcalendar event's datetime.
+ * Saves the updated FullCalendar event's datetime.
  *
  * @param $action
  *   Value can be 'drop' or 'resize'.
@@ -165,7 +167,7 @@ function fullcalendar_get_settings($options) {
     ),
   );
 
-  if ($vars['options']['times']['fc_default_date']) {
+  if ($options['times']['fc_default_date']) {
     $settings[$options['dom_id']]['year'] = $options['times']['fc_date']['year'];
     $settings[$options['dom_id']]['month'] = $options['times']['fc_date']['month'];
     $settings[$options['dom_id']]['day'] = $options['times']['fc_date']['day'];
@@ -201,9 +203,11 @@ function fullcalendar_get_settings($options) {
  *   The field structure for the date field.
  * @param $item
  *   The field value for the date field.
+ * @param $index
+ *   The current index of the date field.
  *
  * @return
- *   Array of event attributes to pass to the FullCalendar plugin.
+ *   String containing specially formatted link for the FullCalendar plugin.
  */
 function _fullcalendar_set_display_times($node, $field_name, $field, $item, $index) {
   if (is_array($node->$field_name)) {
@@ -242,7 +246,7 @@ function _fullcalendar_set_display_times($node, $field_name, $field, $item, $ind
 }
 
 /**
- * Checks if the user has access to update the given fullcalendar event.
+ * Checks if the user has access to update the given FullCalendar event.
  *
  * @param $node
  *   The node that will be updated.

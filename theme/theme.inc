@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Preprocess functions for FullCalendar.
+ */
+
+/**
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_fullcalendar(&$vars) {
@@ -73,7 +78,7 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   }
 
   $vars['data'] = array();
-  // Iterate through available fields.
+  // Iterate through all available fields.
   foreach ($date_fields as $field_name => $field) {
     $field_name = str_replace('_value', '', $field_name);
     $field = content_fields($field_name);
