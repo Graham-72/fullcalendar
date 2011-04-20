@@ -89,7 +89,4 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
     );
   }
 
-  function render($row) {
-    return theme($this->theme_functions(), $this->view, $this->options, $row, $this->field_alias);
-  }
 }
