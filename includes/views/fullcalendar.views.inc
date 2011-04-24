@@ -69,6 +69,9 @@ function fullcalendar_views_handlers() {
       'fullcalendar_handler_area_empty' => array(
         'parent' => 'views_handler_area',
       ),
+      'fullcalendar_handler_field_gcal' => array(
+        'parent' => 'views_handler_field',
+      ),
     ),
   );
 }
@@ -88,6 +91,13 @@ function fullcalendar_views_data() {
         'help' => t('Provide empty calendar.'),
         'area' => array(
           'handler' => 'fullcalendar_handler_area_empty',
+        ),
+      ),
+      'gcal' => array(
+        'title' => t('Google Calendar'),
+        'help' => t('Display events from a Google Calendar.'),
+        'field' => array(
+          'handler' => 'fullcalendar_handler_field_gcal',
         ),
       ),
     ),

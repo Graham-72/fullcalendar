@@ -75,6 +75,10 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+
+FullCalendar 6.x-2.0-alpha1, 2011-04-24
+---------------------------------------
+#981522 by tim.plunkett: Added Google Calendar integration.
 #1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1130956 by tim.plunkett: Re-add support for timestamps.

@@ -17,6 +17,14 @@ function template_preprocess_fullcalendar(&$vars) {
     $view->dom_id = 'fc-' . $dom_id++;
   }
   $options['dom_id'] = '.view-dom-id-' . $view->dom_id;
+
+  $options['gcal'] = array();
+  foreach ($view->field as $field) {
+    if ($field->field == 'gcal') {
+      $options['gcal'][] = $field->render(array());
+    }
+  }
+
   fullcalendar_get_settings($options);
 }
 

@@ -40,7 +40,7 @@ define('FULLCALENDAR_MAX_JQUERYUI_VERSION', '1.8+');
  */
 function fullcalendar_views_api() {
   return array(
-    'api' => '2',
+    'api' => '3',
     'path' => drupal_get_path('module', 'fullcalendar') . '/includes/views',
   );
 }
@@ -164,6 +164,7 @@ function fullcalendar_get_settings($options) {
       'monthString' => t('Month'),
       'todayString' => t('Today'),
       'isRTL' => $language->direction,
+      'gcal' => $options['gcal'],
     ),
   );
 
@@ -177,6 +178,7 @@ function fullcalendar_get_settings($options) {
   drupal_add_js(drupal_get_path('module', 'fullcalendar') . '/js/fullcalendar.views.js', 'module');
   drupal_add_js(fullcalendar_get_js_path());
   drupal_add_css(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/fullcalendar.css');
+  drupal_add_js(variable_get('fullcalendar_path', FULLCALENDAR_PATH) . '/gcal.js');
   drupal_add_css(drupal_get_path('module', 'fullcalendar') . '/css/fullcalendar.theme.css');
 
   // We need some jQuery UI files.

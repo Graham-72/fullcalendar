@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Integrates Views data with the FullCalendar plugin.
+ */
+
 (function ($) {
 
 Drupal.behaviors.fullCalendar = function(context) {
@@ -5,6 +10,35 @@ Drupal.behaviors.fullCalendar = function(context) {
   $.each(Drupal.settings.fullcalendar, function(index, settings) {
     // Hide the failover display.
     $(index).find('.fullcalendar-content').hide();
+
+    // Add events from Drupal.
+    var eventSourcesArray = [
+      function(start, end, callback) {
+        var events = [];
+        $(index).find('.fullcalendar-event-details').each(function() {
+          events.push({
+            field: $(this).attr('field'),
+            index: $(this).attr('index'),
+            nid: $(this).attr('nid'),
+            title: $(this).attr('title'),
+            start: $(this).attr('start'),
+            end: $(this).attr('end'),
+            url: $(this).attr('href'),
+            allDay: ($(this).attr('allDay') === '1'),
+            className: $(this).attr('cn'),
+            editable: $(this).attr('editable'),
+            dom_id: index
+          });
+        });
+        callback(events);
+      }
+    ];
+
+    // Add events from Google Calendar feeds.
+    $.each(settings.gcal, function(i, gcalEntry) {
+      eventSourcesArray.push($.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1]));
+    });
+
     // Use :not to protect against extra AJAX calls from Colorbox.
     $(index).find('.fullcalendar:not(.fc-processed)').addClass('fc-processed').fullCalendar({
       defaultView: settings.defaultView,
@@ -61,27 +95,7 @@ Drupal.behaviors.fullCalendar = function(context) {
         week: settings.weekString,
         month: settings.monthString
       },
-      events: function(start, end, callback) {
-        var events = [];
-
-        $(index).find('.fullcalendar-event-details').each(function() {
-          events.push({
-            field: $(this).attr('field'),
-            index: $(this).attr('index'),
-            nid: $(this).attr('nid'),
-            title: $(this).attr('title'),
-            start: $(this).attr('start'),
-            end: $(this).attr('end'),
-            url: $(this).attr('href'),
-            allDay: ($(this).attr('allDay') === '1'),
-            className: $(this).attr('cn'),
-            editable: $(this).attr('editable'),
-            dom_id: index
-          });
-        });
-
-        callback(events);
-      },
+      eventSources: eventSourcesArray,
       eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
         $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.nid,
           'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay + '&dom_id=' + event.dom_id,
