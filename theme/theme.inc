@@ -9,23 +9,7 @@
  * Passes options to the FullCalendar plugin as JavaScript settings.
  */
 function template_preprocess_fullcalendar(&$vars) {
-  $view = $vars['view'];
-  $options = $vars['options'];
-
-  static $dom_id = 1;
-  if (empty($view->dom_id)) {
-    $view->dom_id = 'fc-' . $dom_id++;
-  }
-  $options['dom_id'] = '.view-dom-id-' . $view->dom_id;
-
-  $options['gcal'] = array();
-  foreach ($view->field as $field) {
-    if ($field->field == 'gcal') {
-      $options['gcal'][] = $field->render(array());
-    }
-  }
-
-  fullcalendar_get_settings($options);
+  fullcalendar_get_settings($vars['view']);
 }
 
 /**
@@ -102,7 +86,7 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     $value = (is_array($node->$field_name)) ? $node->$field_name : array($node->$field_name);
     foreach ($value as $index => $item) {
       // Filter fields without value.
-      if (!is_array($item) || !empty($item['value'])) {
+      if (!empty($item) && (!is_array($item) || isset($item['value']))) {
         $vars['data'][] = _fullcalendar_set_display_times($node, $field_name, $field, $item, $index);
       }
     }

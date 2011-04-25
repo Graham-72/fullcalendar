@@ -1,5 +1,12 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1137218 by tim.plunkett: Let empty handler set dom id and display Google Calendar events.
+#1137660 by aspilicious: Fixed fullcalendar_colors_uninstall().
+
+FullCalendar 7.x-2.0-alpha4, 2011-04-23
+---------------------------------------
+#1041068 by geerlingguy, aspilicious, tim.plunkett: Added Colorpicker similar to Calendar module.
+#1134302 by aspilicious: Make CSS less specific.
 #1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1081488 by tim.plunkett: Fix calculation of the views dom id.
@@ -12,7 +19,7 @@ FullCalendar 7.x-2.x, xxxx-xx-xx
 #1050530 by aspilcious: Window layout fix.
 #1041068 by geerlingguy: Add default menu item to help sub-modules.
 
-FullCalendar 7.x-2.0-alpha2, 2011-03-15
+FullCalendar 7.x-2.0-alpha3, 2011-03-15
 ---------------------------------------
 #1003602 by tim.plunkett: Rename and reorganize files.
 #1063714 by tim.plunkett: Fix error when checking for editable.
@@ -75,6 +82,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1137218 by tim.plunkett: Let empty handler set dom id and display Google Calendar events.
 #1137234 by tim.plunkett: Hide views options if not needed.
 #1033010 by tim.plunkett: Provide a default view as an example.
 #1133316 by tim.plunkett: Fixed row style options.
@@ -82,6 +90,7 @@ FullCalendar 6.x-2.x, xxxx-xx-xx
 FullCalendar 6.x-2.0-alpha1, 2011-04-24
 ---------------------------------------
 #981522 by tim.plunkett: Added Google Calendar integration.
+#1134302 by aspilicious: Make CSS less specific.
 #1133486 by aspilicious: Hide fallback with CSS if JS is enabled.
 #1132472 by tim.plunkett: Allow changing Time display in Month View.
 #1130956 by tim.plunkett: Re-add support for timestamps.

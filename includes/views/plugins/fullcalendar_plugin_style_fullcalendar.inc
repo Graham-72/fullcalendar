@@ -7,7 +7,6 @@
 
 class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
   function option_definition() {
-    $options = parent::option_definition();
     $options['display'] = array(
       'contains' => array(
         'fc_view' => array('default' => 'month'),
