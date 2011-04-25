@@ -75,6 +75,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1133316 by tim.plunkett: Fixed row style options.
 
 FullCalendar 6.x-2.0-alpha1, 2011-04-24
 ---------------------------------------
@@ -105,6 +106,9 @@ FullCalendar 6.x-2.0-alpha1, 2011-04-24
 by tim.plunkett: Updated CHANGELOG.txt.
 
 FullCalendar 6.x-1.x, xxxx-xx-xx
+--------------------------------
+
+FullCalendar 6.x-1.4, 2011-04-24
 --------------------------------
 #1038822 by wildpoppy: Fixed extra closing H3 tag.
 #1038442 by aspilicious: JS clean-up.

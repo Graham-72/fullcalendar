@@ -54,25 +54,34 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   drupal_alter('fullcalendar_classes', $classes, $node);
   $node->class = implode(' ', array_unique($classes));
 
+  $options = $vars['options']['custom'];
+
   // Default URL.
   $node->url = 'node/' . $nid;
 
   // Fetch custom URL if needed.
-  if (!empty($vars['options']['custom']['fc_url'])) {
-    $field_name = $vars['options']['custom']['fc_url_field'];
-    if (!empty($node->{$field_name})) {
-      $node->url = ltrim($node->{$field_name}, '/');
+  if (!empty($options['fc_url'])) {
+    $field_name = str_replace('_value', '', $options['fc_url_field']);
+    if (is_array($node->$field_name)) {
+      if (isset($node->{$field_name}[0]['value'])) {
+        $node->url = ltrim($node->{$field_name}[0]['value'], '/');
+      }
+    }
+    elseif (isset($node->$field_name)) {
+      $node->url = ltrim($node->$field_name, '/');
     }
   }
 
   // Fetch custom title if needed.
-  if (!isset($node->title)) {
-    $node->title = '';
-  }
-  if (!empty($vars['options']['custom']['fc_title'])) {
-    $field_name = $vars['options']['custom']['fc_title_field'];
-    if (!empty($field_name) && !empty($node->{$field_name})) {
-      $node->title = $node->{$field_name};
+  if (!empty($options['fc_title'])) {
+    $field_name = str_replace('_value', '', $options['fc_title_field']);
+    if (is_array($node->$field_name)) {
+      if (isset($node->{$field_name}[0]['value'])) {
+        $node->title = $node->{$field_name}[0]['value'];
+      }
+    }
+    elseif (isset($node->$field_name)) {
+      $node->title = $node->$field_name;
     }
   }
 
