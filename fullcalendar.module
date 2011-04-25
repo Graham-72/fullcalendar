@@ -287,6 +287,7 @@ function fullcalendar_date_fields($fields) {
       case 'access':
       case 'login':
       case 'timestamp':
+      case 'gcal':
         break;
       default:
         $field = content_fields(str_replace('_value', '', $id));
