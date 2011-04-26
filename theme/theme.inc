@@ -84,6 +84,11 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     $field_name = str_replace('_value', '', $field_name);
     $field = content_fields($field_name);
     $value = (is_array($node->$field_name)) ? $node->$field_name : array($node->$field_name);
+
+    // If this is a repeating date, only print the current one.
+    if (isset($field['columns']['rrule'])) {
+      $value = array($value[$vars['view']->row_index]);
+    }
     foreach ($value as $index => $item) {
       // Filter fields without value.
       if (!empty($item) && (!is_array($item) || isset($item['value']))) {
