@@ -4,6 +4,7 @@ sites/all/libraries/fullcalendar directory, or use the Libraries API module for
 site specific libraries.
 
 This version of FullCalendar requires specific versions of the following:
+  The 6.x-3.x branch of Views (http://drupal.org/project/views)
   The 6.x-2.x branch of jQuery Update (http://drupal.org/project/jquery_update)
   Version 1.7 of jQuery UI (http://drupal.org/project/jquery_ui)
 Instructions for installing each can be found in their respective README.txt files
