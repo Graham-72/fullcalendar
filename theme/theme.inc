@@ -31,7 +31,7 @@ function template_preprocess_fullcalendar_fields(&$vars) {
   }
 
   // Allow resize/drag/drop of an event if user has proper permissions.
-  $node->editable = _fullcalendar_update_access($node);
+  $editable = _fullcalendar_update_access($node);
 
   // Create a string of class names.
   $classes = module_invoke_all('fullcalendar_classes', $node);
@@ -84,10 +84,12 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     $field_name = str_replace('_value', '', $field_name);
     $field = content_fields($field_name);
     $value = (is_array($node->$field_name)) ? $node->$field_name : array($node->$field_name);
+    $field['editable'] = $editable;
 
     // If this is a repeating date, only print the current one.
     if (isset($field['columns']['rrule'])) {
       $value = array($value[$vars['view']->row_index]);
+      $field['editable'] = FALSE;
     }
     foreach ($value as $index => $item) {
       // Filter fields without value.

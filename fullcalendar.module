@@ -251,7 +251,7 @@ function _fullcalendar_set_display_times($node, $field_name, $field, $item, $ind
     'cn' => $node->class,
     'title' => $node->title,
     'class' => 'fullcalendar-event-details',
-    'editable' => $node->editable,
+    'editable' => $field['editable'],
   );
   $text = date_format_date($date1);
   if (!$attributes['allDay']) {
