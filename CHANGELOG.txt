@@ -1,5 +1,18 @@
 FullCalendar 7.x-2.x, xxxx-xx-xx
 --------------------------------
+#1206518 by tim.plunkett: Call a specific calendar view through the URL.
+#1198254 by tim.plunkett: Remove usage of ctools_dependent_pre_render() and ctools_dependent_process().
+#1157558 by tim.plunkett: Fixed drag/drop for all three date formats.
+
+FullCalendar 7.x-2.0-alpha6, 2011-06-16
+---------------------------------------
+#1180936 by amateescu: Allow drush to download latest version without breaking minimum version.
+#1189274 by aspilicious: Delete variables with db_delete instead of db_query.
+#1177126 by tim.plunkett: Fixed problems leading to the Default Date not loading.
+#1176594 by aspilicious: Fixed disabling of node type and user role colors.
+#1168398 by rooby, aspilicious, tim.plunkett: Update the README.txt file for Drupal 7 Views.
+#921572 by tim.plunkett: Added ability to pass date argument from view to display specific month.
+#1145016 by tim.plunkett: Clean-up addition of CSS and JS.
 
 FullCalendar 7.x-2.0-alpha5, 2011-04-28
 ---------------------------------------
@@ -88,6 +101,7 @@ FullCalendar 7.x-1.2, 2011-01-19
 
 FullCalendar 6.x-2.x, xxxx-xx-xx
 --------------------------------
+#1206518 by tim.plunkett: Call a specific calendar view through the URL.
 #1076576 by tim.plunkett: Prevent repeating dates from being edited on the calendar.
 #1150336 by arrrgh: Declare Views 6.x-3.x dependency in README.txt.
 #1076576 by tim.plunkett: Added support for repeating dates.
