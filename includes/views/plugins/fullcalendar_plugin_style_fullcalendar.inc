@@ -52,9 +52,9 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
           'bool' => TRUE,
         ),
         'fc_date' => array('default' => array(
-          'year' => '',
-          'month' => '',
-          'day' => '',
+          'year' => '1900',
+          'month' => '1',
+          'day' => '1',
         )),
       ),
     );

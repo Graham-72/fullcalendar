@@ -18,9 +18,9 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
   function option_definition() {
     $options['custom'] = array(
       'contains' => array(
-        'fc_title_field' => array('default' => ''),
-        'fc_url_field' => array('default' => ''),
-        'fc_date_field' => array('default' => ''),
+        'fc_title_field' => array('default' => 'title'),
+        'fc_url_field' => array('default' => 'title'),
+        'fc_date_field' => array('default' => array()),
         'fc_title' => array(
           'default' => FALSE,
           'bool' => TRUE,
