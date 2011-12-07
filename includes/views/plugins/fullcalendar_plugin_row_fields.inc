@@ -21,9 +21,18 @@ class fullcalendar_plugin_row_fields extends views_plugin_row {
         'fc_title_field' => array('default' => ''),
         'fc_url_field' => array('default' => ''),
         'fc_date_field' => array('default' => ''),
-        'fc_title' => array('default' => FALSE),
-        'fc_url' => array('default' => FALSE),
-        'fc_date' => array('default' => FALSE),
+        'fc_title' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
+        'fc_url' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
+        'fc_date' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
       ),
     );
     return $options;

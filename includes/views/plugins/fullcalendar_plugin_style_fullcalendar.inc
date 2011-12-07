@@ -16,12 +16,21 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     );
     $options['modules'] = array(
       'contains' => array(
-        'fc_theme' => array('default' => FALSE),
-        'fc_url_colorbox' => array('default' => FALSE),
+        'fc_theme' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
+        'fc_url_colorbox' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
         'fc_url_colorbox_class' => array('default' => '#squeeze'),
         'fc_url_colorbox_width' => array('default' => '80%'),
         'fc_url_colorbox_height' => array('default' => '80%'),
-        'fc_window' => array('default' => FALSE),
+        'fc_window' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
       ),
     );
     $options['header'] = array(
@@ -34,8 +43,14 @@ class fullcalendar_plugin_style_fullcalendar extends views_plugin_style {
     $options['times'] = array(
       'contains' => array(
         'fc_timeformat' => array('default' => 'h:mm{ - h:mm}'),
-        'fc_clock' => array('default' => FALSE),
-        'fc_default_date' => array('default' => FALSE),
+        'fc_clock' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
+        'fc_default_date' => array(
+          'default' => FALSE,
+          'bool' => TRUE,
+        ),
         'fc_date' => array('default' => array(
           'year' => '',
           'month' => '',
