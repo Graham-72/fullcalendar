@@ -7,15 +7,15 @@
 
 Drupal.behaviors.fullCalendar = function(context) {
   // Process each view and its settings.
-  $.each(Drupal.settings.fullcalendar, function(index, settings) {
+  $.each(Drupal.settings.fullcalendar, function(dom_id, settings) {
     // Hide the failover display.
-    $(index).find('.fullcalendar-content').hide();
+    $(dom_id).find('.fullcalendar-content').hide();
 
     // Add events from Drupal.
     var eventSourcesArray = [
       function(start, end, callback) {
         var events = [];
-        $(index).find('.fullcalendar-event-details').each(function() {
+        $(dom_id).find('.fullcalendar-event-details').each(function() {
           events.push({
             field: $(this).attr('field'),
             index: $(this).attr('index'),
@@ -27,7 +27,7 @@ Drupal.behaviors.fullCalendar = function(context) {
             allDay: ($(this).attr('allDay') === '1'),
             className: $(this).attr('cn'),
             editable: $(this).attr('editable'),
-            dom_id: index
+            dom_id: dom_id
           });
         });
         callback(events);
@@ -39,8 +39,7 @@ Drupal.behaviors.fullCalendar = function(context) {
       eventSourcesArray.push($.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1]));
     });
 
-    // Use :not to protect against extra AJAX calls from Colorbox.
-    $(index).find('.fullcalendar:not(.fc-processed)').addClass('fc-processed').fullCalendar({
+    var options = {
       defaultView: settings.defaultView,
       theme: settings.theme,
       header: {
@@ -108,7 +107,10 @@ Drupal.behaviors.fullCalendar = function(context) {
           fullcalendarUpdate);
         return false;
       }
-    });
+    };
+
+    // Use :not to protect against extra AJAX calls from Colorbox.
+    $(dom_id).find('.fullcalendar:not(.fc-processed)').addClass('fc-processed').fullCalendar(options);
   });
 
   var fullcalendarUpdate = function(response) {
