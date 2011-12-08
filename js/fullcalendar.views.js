@@ -5,39 +5,16 @@
 
 (function ($) {
 
-Drupal.behaviors.fullCalendar = function(context) {
+Drupal.fullcalendar = {};
+
+Drupal.behaviors.fullcalendar = function(context) {
   // Process each view and its settings.
   $.each(Drupal.settings.fullcalendar, function(dom_id, settings) {
+    // Create an object of this calendar.
+    var calendar = $(dom_id);
+
     // Hide the failover display.
-    $(dom_id).find('.fullcalendar-content').hide();
-
-    // Add events from Drupal.
-    var eventSourcesArray = [
-      function(start, end, callback) {
-        var events = [];
-        $(dom_id).find('.fullcalendar-event-details').each(function() {
-          events.push({
-            field: $(this).attr('field'),
-            index: $(this).attr('index'),
-            nid: $(this).attr('nid'),
-            title: $(this).attr('title'),
-            start: $(this).attr('start'),
-            end: $(this).attr('end'),
-            url: $(this).attr('href'),
-            allDay: ($(this).attr('allDay') === '1'),
-            className: $(this).attr('cn'),
-            editable: $(this).attr('editable'),
-            dom_id: dom_id
-          });
-        });
-        callback(events);
-      }
-    ];
-
-    // Add events from Google Calendar feeds.
-    $.each(settings.gcal, function(i, gcalEntry) {
-      eventSourcesArray.push($.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1]));
-    });
+    $('.fullcalendar-content', calendar).hide();
 
     var options = {
       defaultView: settings.defaultView,
@@ -94,36 +71,34 @@ Drupal.behaviors.fullCalendar = function(context) {
         week: settings.weekString,
         month: settings.monthString
       },
-      eventSources: eventSourcesArray,
+      events: function(start, end, callback) {
+        Drupal.fullcalendar.parseEvents(dom_id, calendar, callback);
+
+        // Add events from Google Calendar feeds.
+        $.each(settings.gcal, function(i, gcalEntry) {
+          $('.fullcalendar', calendar).fullCalendar('addEventSource',
+            $.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1])
+          );
+        });
+      },
       eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
         $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.nid,
           'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay + '&dom_id=' + event.dom_id,
-          fullcalendarUpdate);
+          Drupal.fullcalendar.update);
         return false;
       },
       eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
         $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/'+ event.nid,
           'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
-          fullcalendarUpdate);
+          Drupal.fullcalendar.update);
         return false;
       }
     };
 
     // Use :not to protect against extra AJAX calls from Colorbox.
-    $(dom_id).find('.fullcalendar:not(.fc-processed)').addClass('fc-processed').fullCalendar(options);
+    $('.fullcalendar:not(.fc-processed)', calendar).addClass('fc-processed').fullCalendar(options);
   });
 
-  var fullcalendarUpdate = function(response) {
-    var result = Drupal.parseJson(response);
-    fcStatus = $(result.dom_id).find('.fullcalendar-status');
-    if (fcStatus.text() === '') {
-      fcStatus.html(result.msg).slideDown();
-    }
-    else {
-      fcStatus.effect('highlight', {}, 5000);
-    }
-    return false;
-  };
 
   $('.fullcalendar-status-close').live('click', function() {
     $(this).parent().slideUp();
@@ -132,6 +107,38 @@ Drupal.behaviors.fullCalendar = function(context) {
 
   // Trigger a window resize so that calendar will redraw itself as it loads funny in some browsers occasionally
   $(window).resize();
+};
+
+Drupal.fullcalendar.parseEvents = function(dom_id, calendar, callback) {
+  var events = [];
+  $('.fullcalendar-event-details', calendar).each(function() {
+    events.push({
+      field: $(this).attr('field'),
+      index: $(this).attr('index'),
+      nid: $(this).attr('nid'),
+      title: $(this).attr('title'),
+      start: $(this).attr('start'),
+      end: $(this).attr('end'),
+      url: $(this).attr('href'),
+      allDay: ($(this).attr('allDay') === '1'),
+      className: $(this).attr('cn'),
+      editable: $(this).attr('editable'),
+      dom_id: dom_id
+    });
+  });
+  callback(events);
+}
+
+Drupal.fullcalendar.update = function(response) {
+  var result = Drupal.parseJson(response);
+  fcStatus = $(result.dom_id).find('.fullcalendar-status');
+  if (fcStatus.text() === '') {
+    fcStatus.html(result.msg).slideDown();
+  }
+  else {
+    fcStatus.effect('highlight', {}, 5000);
+  }
+  return false;
 };
 
 })(jQuery);
