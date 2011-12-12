@@ -17,4 +17,4 @@ Drupal.behaviors.fullcalendar = function (context) {
   $(window).resize();
 };
 
-})(jQuery);
+}(jQuery));

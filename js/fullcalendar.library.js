@@ -1,96 +1,45 @@
+/**
+ * @file
+ * Provides FullCalendar defaults and functions.
+ */
+
 (function ($) {
 
 Drupal.fullcalendar = Drupal.fullcalendar || {};
 Drupal.fullcalendar.plugins = Drupal.fullcalendar.plugins || {};
 
+// Alias old fullCalendar namespace.
+Drupal.fullCalendar = Drupal.fullcalendar;
+
 Drupal.fullcalendar.fullcalendar = function (dom_id) {
   this.dom_id = dom_id;
   this.$calendar = $(dom_id);
   this.$options = {};
-  var fullcalendar = this;
 
-  var settings = Drupal.settings.fullcalendar[this.dom_id];
-  this.$options = {
-    defaultView: settings.defaultView,
-    theme: settings.theme,
-    header: {
-      left: settings.left,
-      center: settings.center,
-      right: settings.right
-    },
-    isRTL: settings.isRTL === '1',
-    eventClick: function (calEvent, jsEvent, view) {
-      if (settings.colorbox) {
-        // Open in colorbox if exists, else open in new window.
-        if ($.colorbox) {
-          var url = calEvent.url;
-          if(settings.colorboxClass !== '') {
-            url += ' ' + settings.colorboxClass;
-          }
-          $.colorbox({
-            href: url,
-            width: settings.colorboxWidth,
-            height: settings.colorboxHeight
-          });
-        }
-      }
-      else {
-        if (settings.sameWindow) {
-          window.open(calEvent.url, '_self');
-        }
-        else {
-          window.open(calEvent.url);
-        }
-      }
-      return false;
-    },
-    year: (settings.year) ? settings.year : undefined,
-    month: (settings.month) ? settings.month - 1 : undefined,
-    date: (settings.day) ? settings.day : undefined,
-    timeFormat: {
-      agenda: (settings.clock) ? 'HH:mm{ - HH:mm}' : settings.agenda,
-      '': (settings.clock) ? 'HH:mm' : settings.agenda
-    },
-    axisFormat: (settings.clock) ? 'HH:mm' : 'h(:mm)tt',
-    weekMode: settings.weekMode,
-    firstDay: settings.firstDay,
-    monthNames: settings.monthNames,
-    monthNamesShort: settings.monthNamesShort,
-    dayNames: settings.dayNames,
-    dayNamesShort: settings.dayNamesShort,
-    allDayText: settings.allDayText,
-    buttonText: {
-      today: settings.todayString,
-      day: settings.dayString,
-      week: settings.weekString,
-      month: settings.monthString
-    },
-    events: function (start, end, callback) {
-      fullcalendar.parseEvents(callback);
-
-      // Add events from Google Calendar feeds.
-      $.each(settings.gcal, function (i, gcalEntry) {
-        $('.fullcalendar', this.$calendar).fullCalendar('addEventSource',
-          $.fullCalendar.gcalFeed(gcalEntry[0], gcalEntry[1])
-        );
-      });
-    },
-    eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
-      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/drop/'+ event.nid,
-        'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&all_day=' + allDay + '&dom_id=' + event.dom_id,
-        fullcalendar.update);
-      return false;
-    },
-    eventResize: function (event, dayDelta, minuteDelta, revertFunc) {
-      $.post(Drupal.settings.basePath + 'fullcalendar/ajax/update/resize/'+ event.nid,
-        'field=' + event.field + '&index=' + event.index + '&day_delta=' + dayDelta + '&minute_delta=' + minuteDelta + '&dom_id=' + event.dom_id,
-        fullcalendar.update);
-      return false;
+  // Allow other modules to overwrite options.
+  var $options = {};
+  for (var $plugin in Drupal.fullcalendar.plugins) {
+    if (Drupal.fullcalendar.plugins.hasOwnProperty($plugin) && $.isFunction(Drupal.fullcalendar.plugins[$plugin].options)) {
+      var option = {};
+      option[$plugin] = Drupal.fullcalendar.plugins[$plugin].options(this);
+      $.extend($options, option);
     }
-  };
+  }
 
   // Hide the failover display.
   $('.fullcalendar-content', this.$calendar).hide();
+
+  // Load the base FullCalendar options first.
+  // @todo Use the weights system to order this.
+  $.extend(this.$options, $options.fullcalendar);
+  delete $options.fullcalendar;
+
+  // Loop through additional options, overwriting the defaults.
+  for (var option in $options) {
+    if ($options.hasOwnProperty(option)) {
+      $.extend(this.$options, $options[option]);
+    }
+  }
 
   // Use :not to protect against extra AJAX calls from Colorbox.
   $('.fullcalendar:not(.fc-processed)', this.$calendar).addClass('fc-processed').fullCalendar(this.$options);
@@ -136,4 +85,4 @@ Drupal.fullcalendar.fullcalendar.prototype.parseEvents = function (callback) {
   callback(events);
 };
 
-})(jQuery);
+}(jQuery));
