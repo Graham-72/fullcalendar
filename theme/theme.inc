@@ -87,8 +87,7 @@ function template_preprocess_fullcalendar_fields(&$vars) {
     $field['editable'] = $editable;
 
     // If this is a repeating date, only print the current one.
-    if (isset($field['columns']['rrule'])) {
-      $value = array($value[$vars['view']->row_index]);
+    if (isset($field['columns']['rrule']) && count($value) > 1) {
       $field['editable'] = FALSE;
     }
     foreach ($value as $index => $item) {
