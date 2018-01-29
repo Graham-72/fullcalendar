@@ -28,7 +28,7 @@ define('FULLCALENDAR_RECOMMENDED_PLUGIN_VERSION', '1.5.1');
 function fullcalendar_views_api() {
   return array(
     'api' => '3',
-    'path' => drupal_get_path('module', 'fullcalendar') . '/includes/views',
+    'path' => backdrop_get_path('module', 'fullcalendar') . '/includes/views',
   );
 }
 
@@ -52,7 +52,7 @@ function fullcalendar_theme($existing, $type, $theme, $path) {
  * Implements hook_library().
  */
 function fullcalendar_library() {
-  $path = variable_get('fullcalendar_path', fullcalendar_default_path());
+  $path = config_get('fullcalendar.settings','fullcalendar_path');
   $css_files = array($path . '/fullcalendar.css' => array('media' => 'screen'));
 
   // Add fullcalendar.print.css if it is available.
@@ -107,8 +107,8 @@ function fullcalendar_menu() {
     'title' => 'FullCalendar',
     'description' => 'Adjust FullCalendar settings.',
     'file' => 'fullcalendar.admin.inc',
-    'file path' => drupal_get_path('module', 'fullcalendar') . '/includes',
-    'page callback' => 'drupal_get_form',
+    'file path' => backdrop_get_path('module', 'fullcalendar') . '/includes',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('fullcalendar_admin_settings'),
     'access arguments' => array('administer site configuration'),
     'type' => MENU_NORMAL_ITEM,
@@ -196,7 +196,7 @@ function fullcalendar_update($action, $eid) {
     field_attach_update($entity_type, $entity);
   }
 
-  drupal_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $_POST['dom_id']));
+  backdrop_json_output(array('msg' => t('The new event time has been saved.') . ' [' . l(t('Close'), NULL, array('attributes' => array('class' => array('fullcalendar-status-close')))) . ']', 'dom_id' => $_POST['dom_id']));
 }
 
 /**
@@ -371,7 +371,7 @@ function _fullcalendar_status() {
  * @see version_compare()
  */
 function fullcalendar_get_version($fullcalendar_path = NULL) {
-  $version = &drupal_static(__FUNCTION__);
+  $version = &backdrop_static(__FUNCTION__);
 
   if (empty($version)) {
     $version = 0;
@@ -397,7 +397,7 @@ function fullcalendar_get_version($fullcalendar_path = NULL) {
  */
 function fullcalendar_get_js_path() {
   $fullcalendar_file = array('none' => 'fullcalendar.js', 'min' => 'fullcalendar.min.js');
-  return variable_get('fullcalendar_path', fullcalendar_default_path()) . '/' . $fullcalendar_file[variable_get('fullcalendar_compression_type', 'min')];
+  return config_get('fullcalendar.settings','fullcalendar_path') . '/' . $fullcalendar_file[config_get('fullcalendar.settings','fullcalendar_compression_type')];
 }
 
 /**
@@ -422,6 +422,7 @@ function fullcalendar_api_version() {
   return '1';
 }
 
+
 /**
  * Declares the minimum FullCalendar API version.
  */
@@ -435,6 +436,32 @@ function fullcalendar_api_minimum_version() {
 function fullcalendar_fullcalendar_api() {
   return array(
     'api' => fullcalendar_api_version(),
-    'path' => drupal_get_path('module', 'fullcalendar') . '/includes',
+    'path' => backdrop_get_path('module', 'fullcalendar') . '/includes',
   );
 }
+
+/**
+ * Implements hook_config_info().
+ */
+function fullcalendar_config_info()
+{
+  $prefixes['fullcalendar.settings'] = array(
+    'label' => t('Fullcalendar settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+
+/**
+ * Implements hook_autoload_info().
+ */
+function fullcalendar_autoload_info()
+{
+  return array(
+    'fullcalendar_handler_field_gcal' => 'includes/views/handlers/fullcalendar_handler_field_gcal.inc',
+    'fullcalendar_plugin_style_fullcalendar' => 'includes/views/plugins/fullcalendar_plugin_style_fullcalendar.inc'
+  );
+}
+
+
