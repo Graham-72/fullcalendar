@@ -40,17 +40,22 @@ function fullcalendar_requirements($phase) {
   return $requirements;
 }
 
-/**
- * Implements hook_uninstall().
- */
-function fullcalendar_uninstall() {
-  variable_del('fullcalendar_path');
-  variable_del('fullcalendar_compression_type');
-}
 
 /**
- * Force full cache clear to forget about old handlers and plugins.
+ * Move fullcalendar settings from variables to config.
  */
-function fullcalendar_update_7200(&$sandbox) {
-  drupal_flush_all_caches();
+function fullcalendar_update_1000() {
+  // Migrate variables to config.
+  $config = config('fullcalendar.settings');
+  $config->set('fullcalendar_path', update_variable_get('fullcalendar_path','fullcalendar_default_path()');
+  $config->set('fullcalendar_compression_type', update_variable_get('fullcalendar_compression_type','min');
+}
+
+
+
+/**
+ * Implements hook_update_last_removed().
+ */
+function fullcalendar_update_last_removed() {
+    return 7200;
 }
